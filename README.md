@@ -1,4 +1,3 @@
-openstax_utilities
-==================
+= OpenstaxUtilities
 
-Utlities for OpenStax sites
+This project rocks and uses MIT-LICENSE.
