@@ -7,17 +7,12 @@ require "openstax_utilities/version"
 Gem::Specification.new do |s|
   s.name        = "openstax_utilities"
   s.version     = OpenstaxUtilities::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of OpenstaxUtilities."
-  s.description = "TODO: Description of OpenstaxUtilities."
+  s.authors     = ["JP Slavinsky"]
+  s.email       = ["jps@kindlinglabs.com"]
+  s.homepage    = "http://github.com/openstax/openstax_utilities"
+  s.summary     = "Utilities for OpenStax web sites"
+  s.description = "Utilities for OpenStax web sites"
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
-
-  s.add_dependency "rails", "~> 3.2.12"
-  # s.add_dependency "jquery-rails"
-
-  s.add_development_dependency "sqlite3"
 end

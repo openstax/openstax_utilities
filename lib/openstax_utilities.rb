@@ -1,4 +1,2 @@
-require "openstax_utilities/engine"
-
-module OpenstaxUtilities
-end
+require "openstax/utilities/engine"
+require "openstax/utilities/version"
