@@ -1,7 +1,7 @@
 
 module OpenStax
   module Utilities
-    module File
+    module Settings
 
       # Reads and returns a hash of YAML settings from a file
       # @param calling_file This should always be __FILE__
@@ -10,7 +10,7 @@ module OpenStax
       # this method to look up one directory from the directory of calling_file
       # @param filename the plain filename, e.g. 'foobar.yml'
       #
-      def load_settings(calling_file, relative_directory, filename)
+      def self.load_settings(calling_file, relative_directory, filename)
         settings = {}
         
         filename = File.join(File.dirname(calling_file), '..', 'developer_settings.yml')
