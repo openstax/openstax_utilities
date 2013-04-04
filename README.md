@@ -1,4 +1,5 @@
-= OpenstaxUtilities
+OpenstaxUtilities
+=================
 
 A set of common utilities for the various OpenStax projects.  
 
