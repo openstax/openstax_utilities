@@ -1,4 +1,4 @@
-module Openstax
+module OpenStax
   module Utilities
     class Engine < ::Rails::Engine
     end
