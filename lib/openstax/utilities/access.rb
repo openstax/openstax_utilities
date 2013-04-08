@@ -22,8 +22,7 @@ module OpenStax
       # authentication, typically used when code is deployed during development
       # and it is not yet ready for public consumption.
       #
-      # Example:
-      # 
+      # @example Basic usage
       #   class ApplicationController < ActionController::Base
       #     protect_beta :username => 'bob',
       #                  :password => '123'
@@ -31,10 +30,10 @@ module OpenStax
       # @param :username The authentication username; default value is a random hex string
       # @param :password The authentication password; default value is a random hex string
       # @param :enable_always The default is the authentication is only enabled
-      # in production, setting this to true will make it effective in all 
-      # environments
+      #   in production, setting this to true will make it effective in all 
+      #   environments
       # @param :message If given, this message will be displayed in the browser's
-      # authentication dialog box.
+      #   authentication dialog box.
       #
       def self.protect_beta(options={})
         # Just here for documentation purposes, see code above
