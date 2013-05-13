@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    openstax_utilities (0.0.1)
+    openstax_utilities (0.0.3)
 
 GEM
   remote: http://rubygems.org/
