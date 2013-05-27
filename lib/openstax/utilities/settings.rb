@@ -13,7 +13,7 @@ module OpenStax
       def self.load_settings(calling_file, relative_directory, filename)
         settings = {}
         
-        filename = File.join(File.dirname(calling_file), '..', 'developer_settings.yml')
+        filename = File.join(File.dirname(calling_file), relative_directory, filename)
         
         if File.file?(filename)
           settings = YAML::load_file(filename)
