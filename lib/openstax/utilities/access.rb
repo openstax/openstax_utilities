@@ -1,4 +1,3 @@
-
 ActionController::Base.define_singleton_method(:protect_beta) do |options={}|
   options[:username] ||= SecureRandom.hex
   options[:password] ||= SecureRandom.hex
@@ -7,7 +6,17 @@ ActionController::Base.define_singleton_method(:protect_beta) do |options={}|
   
   return if !(options[:enable_always] || Rails.env.production?)
 
-  prepend_before_filter do 
+  @@protect_beta_options = options
+  prepend_before_filter :protect_beta
+end
+
+ActionController::Base.define_singleton_method(:skip_protect_beta) do |options={}|
+  skip_before_filter :protect_beta, options
+end
+
+class ActionController::Base
+  def protect_beta
+    options = @@protect_beta_options
     authenticate_or_request_with_http_basic(options[:message]) do |username, password|
       username == options[:username] && password == options[:password]
     end
@@ -36,6 +45,20 @@ module OpenStax
       #   authentication dialog box.
       #
       def self.protect_beta(options={})
+        # Just here for documentation purposes, see code above
+      end
+
+      # Called in a controller to skip the beta protection enabled elsewhere (e.g.
+      # in a parent controller).  Takes options like skip_before_filter
+      #
+      # @example Usage to skip beta protection on index action
+      #   class MyController < ApplicationController
+      #     skip_protect_beta :except => [:index]
+      #
+      # @param :except Methods to not use this skip for
+      # @param :only The only methods to use this skipping
+      #
+      def self.skip_protect_beta(options={})
         # Just here for documentation purposes, see code above
       end
 
