@@ -3,19 +3,19 @@
 
 module BlockHelper
 
-  def section_block(heading=nil, &block)
+  def osu_section_block(heading=nil, &block)
     presenter = OpenStax::Utilities::Blocks::SectionBlock.new(self, heading, block)
   end
 
-  def table_block(&block)
+  def osu_table_block(&block)
     presenter = TableBlock.new(self, block)
   end
 
-  def table_row_block(&block)
+  def osu_table_row_block(&block)
     presenter = TableRowBlock.new(self, block)
   end
 
-  def table_cell_block(&block)
+  def osu_table_cell_block(&block)
     presenter = TableCellBlock.new(self, block)
   end
 
