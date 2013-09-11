@@ -54,12 +54,14 @@ module OpenStax
       end
 
       class Error
+        attr_accessor :scope
         attr_accessor :code
         attr_accessor :data
         attr_accessor :ui_label
 
         def initialize(args={})
           raise IllegalArgument if args[:code].blank?
+          self.scope = args[:scope]
           self.code = args[:code]
           self.data = args[:data]
           self.ui_label = args[:ui_label]
@@ -73,6 +75,16 @@ module OpenStax
 
         def [](key)
           self[key]
+        end
+
+        def includes?(scope, ui_label)
+          self.any?{|e| e.scope == scope && e.ui_label == ui_label}
+        end
+      end
+
+      def transfer_model_errors(model_object)
+        model_object.errors.each_type do |attribute, type|
+          errors.add(scope: :register, code: type, data: model_object, ui_label: attribute)
         end
       end
 
@@ -145,9 +157,8 @@ module OpenStax
         options[:success] ||= lambda {}
         options[:failure] ||= lambda {}
 
-        @results, @errors = handler.handle(current_user,
-                                           options[:params])
-debugger
+        @results, @errors = handler.handle(current_user, options[:params])
+
         if options[:complete].nil?
           @errors.empty? ?
             options[:success].call :
