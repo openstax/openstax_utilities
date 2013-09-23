@@ -5,6 +5,7 @@ require "openstax/utilities/settings"
 require "openstax/utilities/access"
 require "openstax/utilities/enum"
 require "openstax/utilities/ruby"
+require "openstax/utilities/text"
 
 require 'openstax/utilities/blocks/block_base'
 require 'openstax/utilities/blocks/section_block'
