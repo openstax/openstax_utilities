@@ -1,5 +1,5 @@
 module OpenStax
   module Utilities
-    VERSION = "0.0.8.alpha"
+    VERSION = "1.0.0"
   end
 end

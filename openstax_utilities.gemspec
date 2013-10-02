@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/openstax/openstax_utilities"
   s.summary     = "Utilities for OpenStax web sites"
   s.description = "Utilities for OpenStax web sites"
+  s.license     = "MIT"
 
   s.files = Dir["{app,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
