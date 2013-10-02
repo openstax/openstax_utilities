@@ -7,6 +7,10 @@ require "openstax/utilities/enum"
 require "openstax/utilities/ruby"
 require "openstax/utilities/text"
 
+require "openstax/utilities/classy_helper"
+require "openstax/utilities/helpers/blocks"
+require "openstax/utilities/helpers/partials"
+
 require 'openstax/utilities/blocks/block_base'
 require 'openstax/utilities/blocks/section_block'
 require 'openstax/utilities/blocks/table_block'

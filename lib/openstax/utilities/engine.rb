@@ -2,10 +2,12 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'OpenStax'
 end
 
+OSU = OpenStax::Utilities
+
 module OpenStax
   module Utilities
     class Engine < ::Rails::Engine
-      # isolate_namespace OpenStax::Utilities
+      isolate_namespace OpenStax::Utilities
 
       initializer "openstax_utilities.assets.precompile" do |app|
         app.config.assets.precompile += %w(openstax_utilities.css openstax_utilities.js)
@@ -13,12 +15,11 @@ module OpenStax
 
       initializer 'openstax_utilities.action_controller' do |app|
         ActiveSupport.on_load :action_controller do
-          helper BlockHelper
-          helper PartialHelper
+          helper OSU::OsuHelper
         end
       end
     end
   end
 end
 
-OSU = OpenStax::Utilities
+

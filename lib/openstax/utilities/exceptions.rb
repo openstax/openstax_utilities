@@ -4,3 +4,4 @@ class NotYetImplemented < StandardError; end
 class IllegalArgument < StandardError; end
 class IllegalState < StandardError; end
 class IllegalOperation < StandardError; end
+class Unexpected < StandardError; end
