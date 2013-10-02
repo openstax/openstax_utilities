@@ -2,8 +2,6 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'OpenStax'
 end
 
-OSU = OpenStax::Utilities
-
 module OpenStax
   module Utilities
     class Engine < ::Rails::Engine
@@ -21,5 +19,3 @@ module OpenStax
     end
   end
 end
-
-

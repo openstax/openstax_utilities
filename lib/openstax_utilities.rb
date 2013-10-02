@@ -1,3 +1,10 @@
+module OpenStax
+  module Utilities
+  end
+end
+
+OSU = OpenStax::Utilities
+
 require "openstax/utilities/engine"
 require "openstax/utilities/version"
 require "openstax/utilities/exceptions"
