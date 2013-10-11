@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    openstax_utilities (1.0.1)
+    openstax_utilities (1.0.2)
       attribeautiful (~> 0.0.7)
       rails (>= 3.1)
 
@@ -51,7 +51,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.25)
-    multi_json (1.8.0)
+    multi_json (1.8.1)
     polyglot (0.3.3)
     rack (1.4.5)
     rack-cache (1.2)
