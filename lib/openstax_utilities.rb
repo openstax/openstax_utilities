@@ -13,10 +13,13 @@ require "openstax/utilities/access"
 require "openstax/utilities/enum"
 require "openstax/utilities/ruby"
 require "openstax/utilities/text"
+require "openstax/utilities/network"
+require "openstax/utilities/action_list"
 
 require "openstax/utilities/classy_helper"
 require "openstax/utilities/helpers/blocks"
 require "openstax/utilities/helpers/partials"
+require "openstax/utilities/helpers/action_list"
 
 require 'openstax/utilities/blocks/block_base'
 require 'openstax/utilities/blocks/section_block'

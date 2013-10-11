@@ -1,0 +1,37 @@
+<%# Copyright 2011-2012 Rice University. Licensed under the Affero General Public 
+    License version 3 or later.  See the COPYRIGHT file for details. %>
+
+<%
+  records ||= []
+  list = OpenStax::Utilities::ActionList.new(list)
+%>
+
+<% if list.num_columns > 0 %>
+  <table class="action-list" width="100%">
+    <% if list.has_headings? %>
+      <tr class="action-list-header-row">  
+        <% for ii in 0..list.num_columns - 1 %>
+          <th class="action-list-col-<%= ii %>"><%= list.get_heading(ii) %></th>
+        <% end %>
+      </tr>
+    <% end %>
+
+    <% if records.empty? %>
+      <tr>
+        <td colspan="<%= list.num_columns %>">No results</td>
+      </tr>
+    <% else %>
+      <% records.all.each_with_index do |user, rr| %>
+        <tr class="action-list-data-row <%= cycle('even', 'odd') %>">
+          <% for cc in 0..list.num_columns - 1 %>
+            <% width = rr == 0 ? list.get_width(cc) : nil %>
+            <td class="action-list-col-<%= ii %>" 
+                <%= "width=#{width}" if width %>>
+                <%= list.get_data(cc, user) %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    <% end %>
+  </table>
+<% end %>
