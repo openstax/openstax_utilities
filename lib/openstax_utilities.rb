@@ -20,6 +20,7 @@ require "openstax/utilities/classy_helper"
 require "openstax/utilities/helpers/blocks"
 require "openstax/utilities/helpers/partials"
 require "openstax/utilities/helpers/action_list"
+require "openstax/utilities/helpers/datetime"
 
 require 'openstax/utilities/blocks/block_base'
 require 'openstax/utilities/blocks/section_block'
@@ -60,10 +61,14 @@ module OpenStax
       end
 
       class Configuration
-        # attr_accessor :some_parameter_name_here
+        attr_accessor :standard_date_format
+        attr_accessor :standard_datetime_format
+        attr_accessor :standard_time_format
         
         def initialize      
-          # @some_parameter_name_here = some value here
+          @standard_date_format = "%b %d, %Y"
+          @standard_datetime_format = "%b %d, %Y %l:%M %p %Z"
+          @standard_time_format = "%l:%M %p %Z"
           super
         end
       end
