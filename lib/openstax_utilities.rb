@@ -15,6 +15,7 @@ require "openstax/utilities/ruby"
 require "openstax/utilities/text"
 require "openstax/utilities/network"
 require "openstax/utilities/action_list"
+require "openstax/utilities/acts_as_numberable"
 
 require "openstax/utilities/classy_helper"
 require "openstax/utilities/helpers/blocks"
