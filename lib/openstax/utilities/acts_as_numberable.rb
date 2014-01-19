@@ -61,7 +61,7 @@ module OpenStax
           validates :#{number_field}, :uniqueness => { #{uniqueness_scope_string}
                                                        :allow_nil => true},
                                       :numericality => { :only_integer => true, 
-                                                         :greater_than => 0,
+                                                         :greater_than_or_equal_to => 0,
                                                          :allow_nil => true }    
 
           
@@ -87,7 +87,7 @@ module OpenStax
               end
               
               items.each_with_index do |item, ii| 
-                item..send('#{number_field}=', ii + 1)
+                item.send('#{number_field}=', ii)
                 item.save!
               end
             end
@@ -143,11 +143,15 @@ module OpenStax
         end
 
         def assign_number
-          self.send("#{number_field}=", my_class.count + 1) if self.send("#{number_field}").nil?
+          self.send("#{number_field}=", my_class.count) if self.send("#{number_field}").nil?
         end
          
         def mark_as_destroyed
           destroyed = true
+        end
+
+        def me_and_peers
+          my_class.scoped
         end
       end
        
@@ -190,6 +194,10 @@ module OpenStax
           table_class || self.class
         end
 
+        def me_and_peers
+          my_class.where(container_column => self.send(container_column))
+        end
+
         protected
         
         def assign_number
@@ -197,7 +205,7 @@ module OpenStax
             self.send("#{number_field}=", 
                       my_class
                         .where(container_column => self.send(container_column))
-                        .count + 1) 
+                        .count) 
           end
         end
       end
