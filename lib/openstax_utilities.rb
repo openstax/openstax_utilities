@@ -20,6 +20,7 @@ require "openstax/utilities/acts_as_numberable"
 require "openstax/utilities/delegate_access_control"
 
 require "openstax/utilities/classy_helper"
+require "openstax/utilities/helpers/misc"
 require "openstax/utilities/helpers/blocks"
 require "openstax/utilities/helpers/partials"
 require "openstax/utilities/helpers/action_list"
