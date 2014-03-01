@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    openstax_utilities (1.2.1.alpha)
+    openstax_utilities (1.3.0)
       attribeautiful (~> 0.0.7)
       rails (>= 3.1)
 
