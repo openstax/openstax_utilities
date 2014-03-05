@@ -19,13 +19,13 @@ module OpenStax
         end
       end
 
-      def rest_get(model_klass, id, represent_with=nil)
+      def standard_read(model_klass, id, represent_with=nil)
         @model = model_klass.find(id)
         raise SecurityTransgression unless current_user.can_read?(@model)
         respond_with @model, represent_with: get_representer(represent_with, @model)
       end
 
-      def rest_update(model_klass, id, represent_with=nil)
+      def standard_update(model_klass, id, represent_with=nil)
         @model = model_klass.find(id)
         raise SecurityTransgression unless current_user.can_update?(@model)
         consume!(@model, represent_with: get_representer(represent_with, @model))
@@ -37,8 +37,17 @@ module OpenStax
         end
       end
 
-      def rest_create(model_klass)
+      def standard_create(model_klass, represent_with=nil)
+        standard_nested_create(model_klass, nil, nil, represent_with)
+      end
+
+      def standard_nested_create(model_klass, container_association=nil, container_id=nil, represent_with=nil)
         @model = model_klass.new()
+
+        if container_association && container_id
+          foreign_key = model_klass.reflect_on_association(container_association).association_foreign_key
+          @model.send(foreign_key + '=', container_id)
+        end
 
         # Unlike the implications of the representable README, "consume!" can
         # actually make changes to the database.  See http://goo.gl/WVLBqA. 
@@ -47,18 +56,18 @@ module OpenStax
         # want to have changed the DB.  Wrap in a transaction to protect ourselves.
 
         model_klass.transaction do 
-          consume!(@model)
+          consume!(@model, represent_with: get_representer(represent_with, @model))
           raise SecurityTransgression unless current_user.can_create?(@model)
         end
 
         if @model.save
-          respond_with @model
+          respond_with @model, represent_with: get_representer(represent_with, @model), status: :created
         else
           render json: @model.errors, status: :unprocessable_entity
         end
       end
 
-      def rest_destroy(model_klass, id)
+      def standard_destroy(model_klass, id)
         @model = model_klass.find(id)
         raise SecurityTransgression unless current_user.can_destroy?(@model)
         
