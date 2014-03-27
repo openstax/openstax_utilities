@@ -7,6 +7,21 @@ module OpenStax
 
       let!(:user) { User.create }
 
+      it 'responds to any _allowed? calls' do
+        AccessPolicy.register(User, DummyAccessPolicy)
+
+        DummyAccessPolicy.last_action = nil
+        DummyAccessPolicy.last_requestor = nil
+        DummyAccessPolicy.last_resource = nil
+
+        expect(AccessPolicy.respond_to? :wacky_allowed?).to eq(true)
+        expect(AccessPolicy.wacky_allowed?(user, user)).to eq(true)
+
+        expect(DummyAccessPolicy.last_action).to eq(:wacky)
+        expect(DummyAccessPolicy.last_requestor).to eq(user)
+        expect(DummyAccessPolicy.last_resource).to eq(user)
+      end
+
       it 'delegates checks to policy classes based on resource class' do
         dummy_object = double('Dummy')
         dummy_policy = double('Dummy Policy', :action_allowed? => true)

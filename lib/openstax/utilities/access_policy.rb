@@ -11,8 +11,16 @@ module OpenStax
         @resource_policy_map = {}
       end
 
-      def self.read_allowed?(requestor, resource)
-        action_allowed?(:read, requestor, resource)
+      def self.method_missing(method_name, *arguments, &block)
+        if method_name.to_s =~ /(.*)_allowed?/
+          action_allowed?(*arguments.unshift($1.to_sym), &block)
+        else
+          super
+        end
+      end
+
+      def self.respond_to_missing?(method_name, include_private = false)
+        method_name.to_s.end_with?('_allowed?') || super
       end
 
       def self.require_action_allowed!(action, requestor, resource)
