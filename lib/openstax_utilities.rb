@@ -20,6 +20,7 @@ require "openstax/utilities/acts_as_numberable"
 require "openstax/utilities/delegate_access_control"
 require "openstax/utilities/roar"
 require "openstax/utilities/access_policy"
+require "openstax/utilities/controller_extensions"
 
 require "openstax/utilities/classy_helper"
 require "openstax/utilities/helpers/misc"
