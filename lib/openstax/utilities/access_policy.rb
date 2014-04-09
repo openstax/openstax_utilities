@@ -32,7 +32,8 @@ module OpenStax
         # If the incoming requestor is an ApiUser, choose to use either its
         # human_user or its application.  If there is a human user involved, it
         # should always take precedence when testing for access.
-        if defined?(ApiUser) && requestor.is_a?(ApiUser)
+        if defined?(OpenStax::Api::ApiUser) &&
+           requestor.is_a?(OpenStax::Api::ApiUser)
           requestor = requestor.human_user ? requestor.human_user : requestor.application
         end
 

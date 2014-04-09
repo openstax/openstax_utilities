@@ -13,12 +13,12 @@ module OpenStax
 
       end
 
-      it 'adds require_restful_actions_allowed! to controllers' do
+      it 'adds require_actions_allowed! to controllers' do
 
         expect(ApplicationController).to(
-          respond_to(:require_restful_actions_allowed!))
+          respond_to(:require_actions_allowed!))
 
-        expect(UsersController).to respond_to(:require_restful_actions_allowed!)
+        expect(UsersController).to respond_to(:require_actions_allowed!)
 
       end
 

@@ -18,7 +18,6 @@ require "openstax/utilities/network"
 require "openstax/utilities/action_list"
 require "openstax/utilities/acts_as_numberable"
 require "openstax/utilities/delegate_access_control"
-require "openstax/utilities/roar"
 require "openstax/utilities/access_policy"
 require "openstax/utilities/controller_extensions"
 
@@ -71,11 +70,16 @@ module OpenStax
         attr_accessor :standard_date_format
         attr_accessor :standard_datetime_format
         attr_accessor :standard_time_format
+        attr_accessor :allowed_actions_map
         
         def initialize      
           @standard_date_format = "%b %d, %Y"
           @standard_datetime_format = "%b %d, %Y %l:%M %p %Z"
           @standard_time_format = "%l:%M %p %Z"
+          @allowed_actions_map = {'index' => :read,
+                                  'show' => :read,
+                                  'new' => :create,
+                                  'edit' => :update}
           super
         end
       end

@@ -5,7 +5,7 @@ describe UsersController, :type => :controller do
   let!(:user) { User.create }
 
   before(:all) do
-    UsersController.require_restful_actions_allowed!
+    UsersController.require_actions_allowed! :except => :index
     OSU::AccessPolicy.register(User, DummyAccessPolicy)
   end
 
