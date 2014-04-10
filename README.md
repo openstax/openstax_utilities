@@ -1,5 +1,8 @@
-OpenstaxUtilities
-=================
+OpenStax Utilities
+==================
+
+[![Build Status](https://travis-ci.org/openstax/openstax_utilities.svg?branch=master)](https://travis-ci.org/openstax/openstax_utilities)
+[![Code Climate](https://codeclimate.com/github/openstax/openstax_utilities.png)](https://codeclimate.com/github/openstax/openstax_utilities)
 
 A set of common utilities for the various OpenStax projects.
 
