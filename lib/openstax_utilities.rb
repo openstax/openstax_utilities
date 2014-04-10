@@ -19,7 +19,6 @@ require "openstax/utilities/action_list"
 require "openstax/utilities/acts_as_numberable"
 require "openstax/utilities/delegate_access_control"
 require "openstax/utilities/access_policy"
-require "openstax/utilities/controller_extensions"
 
 require "openstax/utilities/classy_helper"
 require "openstax/utilities/helpers/misc"
@@ -57,18 +56,6 @@ module OpenStax
       #     ...
       #   end
       #
-      # controller_actions_map
-      # Maps controller action names (e.g. 'index', 'show', 'new', 'create',
-      # 'edit', 'update', 'destroy') to their respective CRUD equivalents
-      # (i.e. :create, :read, :update, :destroy) to be called as AccessPolicy
-      # actions. Other custom mappings can be specified as well. If no mapping is
-      # specified, then the action name is passed directly to AccessPolicy.
-      #
-      # For example, the default mapping ensures that the 'show' action will ask
-      # AccessPolicy for :read permission, while an unmapped 'search' action
-      # would ask it for :search permission.
-      #
-      # If 
       
       def configure
         yield configuration
@@ -82,16 +69,11 @@ module OpenStax
         attr_accessor :standard_date_format
         attr_accessor :standard_datetime_format
         attr_accessor :standard_time_format
-        attr_accessor :controller_actions_map
         
         def initialize      
           @standard_date_format = "%b %d, %Y"
           @standard_datetime_format = "%b %d, %Y %l:%M %p %Z"
           @standard_time_format = "%l:%M %p %Z"
-          @controller_actions_map = {'index' => :read,
-                                     'show' => :read,
-                                     'new' => :create,
-                                     'edit' => :update}
           super
         end
       end
