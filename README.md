@@ -37,16 +37,3 @@ OSU::AccessPolicy.register(User, UserAccessPolicy)
 ```
 
 This call is typically made after the policy class' definition so that it is called when the Rails application is loaded. We recommend placing the policy classes under `app/access_policies`, as all files under the `app` directory are autoloaded by Rails.
-
-## Controller Extensions
-
-The following methods will be added to all controllers:
-
-`get_model(id_param, klass)` tries to use the id_param to return the model in question for
-restful actions, or a new instance of klass if the id could not be found.
-(e.g. on :new, :create and even :index)
-By default, id_param is :id and klass is controller_name.classify.constantize.
-
-`self.require_restful_actions_allowed!(options)` adds a before_filter that calls AccessPolicy.require_action_allowed! for all restful actions except :index. So by default it will add checks to :show, :new, :create, :edit, :update and :destroy.
-options is a hash that contains any desired before_filter options, plus the optional keys :id_param and :model_class, which are passed to get_model instead.
-By default, options is an empty hash.
