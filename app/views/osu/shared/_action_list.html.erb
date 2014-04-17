@@ -21,7 +21,7 @@
         <td colspan="<%= list.num_columns %>">No results</td>
       </tr>
     <% else %>
-      <% records.all.each_with_index do |user, rr| %>
+      <% records.to_a.each_with_index do |user, rr| %>
         <tr class="action-list-data-row <%= cycle('even', 'odd') %>">
           <% for cc in 0..list.num_columns - 1 %>
             <% width = rr == 0 ? list.get_width(cc) : nil %>
