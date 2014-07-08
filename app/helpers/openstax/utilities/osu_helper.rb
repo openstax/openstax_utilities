@@ -4,7 +4,6 @@ module OpenStax::Utilities
     def osu
       @@osu_class ||= Class.new(ClassyHelper) do
         include OpenStax::Utilities::Helpers::Misc
-        include OpenStax::Utilities::Helpers::Blocks
         include OpenStax::Utilities::Helpers::Partials
         include OpenStax::Utilities::Helpers::ActionList
         include OpenStax::Utilities::Helpers::Datetime

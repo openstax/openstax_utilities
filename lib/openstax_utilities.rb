@@ -22,16 +22,9 @@ require "openstax/utilities/access_policy"
 
 require "openstax/utilities/classy_helper"
 require "openstax/utilities/helpers/misc"
-require "openstax/utilities/helpers/blocks"
 require "openstax/utilities/helpers/partials"
 require "openstax/utilities/helpers/action_list"
 require "openstax/utilities/helpers/datetime"
-
-require 'openstax/utilities/blocks/block_base'
-require 'openstax/utilities/blocks/section_block'
-require 'openstax/utilities/blocks/table_block'
-require 'openstax/utilities/blocks/table_cell_block'
-require 'openstax/utilities/blocks/table_row_block'
 
 module OpenStax
   module Utilities
