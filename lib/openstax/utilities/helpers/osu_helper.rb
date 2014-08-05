@@ -1,8 +1,8 @@
-module OpenStax::Utilities
+module OpenStax::Utilities::Helpers
   module OsuHelper
 
     def osu
-      @@osu_class ||= Class.new(ClassyHelper) do
+      @@osu_class ||= Class.new(OSU::ClassyHelper) do
         include OpenStax::Utilities::Helpers::Misc
         include OpenStax::Utilities::Helpers::Partials
         include OpenStax::Utilities::Helpers::ActionList
@@ -14,3 +14,5 @@ module OpenStax::Utilities
 
   end
 end
+
+ActionController::Base.send :helper, OSU::Helpers::OsuHelper

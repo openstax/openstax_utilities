@@ -25,6 +25,7 @@ require "openstax/utilities/helpers/misc"
 require "openstax/utilities/helpers/partials"
 require "openstax/utilities/helpers/action_list"
 require "openstax/utilities/helpers/datetime"
+require "openstax/utilities/helpers/osu_helper"
 
 module OpenStax
   module Utilities
