@@ -15,17 +15,10 @@ require "openstax/utilities/enum"
 require "openstax/utilities/ruby"
 require "openstax/utilities/text"
 require "openstax/utilities/network"
-require "openstax/utilities/action_list"
 require "openstax/utilities/acts_as_numberable"
 require "openstax/utilities/delegate_access_control"
 require "openstax/utilities/access_policy"
-
-require "openstax/utilities/classy_helper"
-require "openstax/utilities/helpers/misc"
-require "openstax/utilities/helpers/partials"
-require "openstax/utilities/helpers/action_list"
-require "openstax/utilities/helpers/datetime"
-require "openstax/utilities/helpers/osu_helper"
+require "openstax/utilities/osu_helper"
 
 module OpenStax
   module Utilities

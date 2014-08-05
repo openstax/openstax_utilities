@@ -2,6 +2,8 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'OpenStax'
 end
 
+require "openstax/utilities/action_list"
+
 module OpenStax
   module Utilities
     class Engine < ::Rails::Engine
