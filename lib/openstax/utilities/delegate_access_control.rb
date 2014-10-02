@@ -42,6 +42,11 @@ module OpenStax
         EOV
 
       end
+
+      # Convenience method for delegate_access_control
+      def delegate_access_control_to(relation, options = {})
+        delegate_access_control options.merge(to: relation)
+      end
        
     end
 
