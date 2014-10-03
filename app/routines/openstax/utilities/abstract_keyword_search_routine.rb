@@ -7,39 +7,42 @@
 #
 # Subclasses must set the initial_relation, search_proc and sortable_fields class variables
 #
-# Required:
+#   initial_relation - the ActiveRecord::Relation that contains all
+#                      records to be searched, usually ClassName.unscoped
 #
-#   initial_relation is the ActiveRecord::Relation that contains
-#   all records to be searched, usually ClassName.unscoped
-#
-#   search_proc is a proc passed to keyword_search's `search` method
-#   It receives keyword_search's `with` object as argument
-#   This proc must define the `keyword` blocks for keyword_search
-#   The relation to be scoped is contained in the @items instance variable
+#   search_proc - a proc passed to keyword_search's `search` method
+#                 it receives keyword_search's `with` object as argument
+#                 this proc must define the `keyword` blocks for keyword_search
+#                 the relation to be scoped is contained in the @items instance variable
 #
 #   The `sanitize_names` helper can help with parsing strings from the query
 #
-#   sortable_fields_map is a Hash that maps the lowercase names of fields that can
-#   be used to sort the results to symbols for their respective database columns
-#     Keys are lowercase strings allowed in options[:order_by]
-#     Values are the corresponding database column names passed to the order() method
+#   sortable_fields_map - a Hash that maps the lowercase names of fields
+#                         which can be used to sort the results to symbols
+#                         for their respective database columns
+#                         keys are lowercase strings that should be allowed
+#                         in options[:order_by]
+#                         values are the corresponding database column names
+#                         that will be passed to the order() method
 #
 # Callers of subclass routines provides a query argument and an options hash
 #
-#   The query is a string that follows the keyword format above
+# Required arguments:
 #
-#   The options hash can have any of several available options:
+#   query - a string that follows the keyword format above
+#
+# Options hash:
 #
 #     Ordering:
 #
 #       :order_by - list of fields to sort by, with optional sort directions
 #                   can be a String, Array of Strings or Array of Hashes
-#                   (default: {"created_at" => :asc})
+#                   default: {"created_at" => :asc}
 #
-#     Pagination - set per_page to enable:
+#     Pagination:
 #
-#       :per_page - the maximum number of results per page (default: nil)
-#       :page     - the page to return (default: 1)
+#       :per_page - the maximum number of results per page - default: nil (disabled)
+#       :page     - the page to return - default: 1
 #
 # This routine's output contains:
 #
@@ -50,14 +53,14 @@
 #
 #   outputs[:items].limit(nil).offset(nil).count
 #
-# See spec/dummy/app/routines/user_search.rb for an example search routine
+# See spec/dummy/app/routines/search_users.rb for an example search routine
 
 require 'lev'
 require 'keyword_search'
 
 module OpenStax
   module Utilities
-    class AbstractKeywordSearch
+    class AbstractKeywordSearchRoutine
 
       lev_routine transaction: :no_transaction
 
@@ -75,7 +78,7 @@ module OpenStax
 
         # Scoping
 
-        KeywordSearch.search(query) do |with|
+        ::KeywordSearch.search(query) do |with|
           instance_exec(with, &search_proc)
         end
 

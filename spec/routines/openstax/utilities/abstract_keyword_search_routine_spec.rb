@@ -2,7 +2,7 @@ require 'rails_helper'
 
 module OpenStax
   module Utilities
-    describe AbstractKeywordSearch do
+    describe AbstractKeywordSearchRoutine do
 
       let!(:john_doe) { FactoryGirl.create :user, name: "John Doe",
                                            username: "doejohn",
@@ -23,7 +23,7 @@ module OpenStax
       end
 
       it "filters results based on one field" do
-        items = UserSearch.call('last_name:dOe').outputs[:items]
+        items = SearchUsers.call('last_name:dOe').outputs[:items]
 
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
@@ -34,7 +34,7 @@ module OpenStax
       end
 
       it "filters results based on multiple fields" do
-        items = UserSearch.call('first_name:jOhN last_name:dOe').outputs[:items]
+        items = SearchUsers.call('first_name:jOhN last_name:DoE').outputs[:items]
 
         expect(items).to include(john_doe)
         expect(items).not_to include(jane_doe)
@@ -45,7 +45,7 @@ module OpenStax
       end
 
       it "filters results based on multiple keywords per field" do
-        items = UserSearch.call('first_name:jOhN,JaNe last_name:dOe').outputs[:items]
+        items = SearchUsers.call('first_name:JoHn,JaNe last_name:dOe').outputs[:items]
 
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
@@ -56,7 +56,7 @@ module OpenStax
       end
 
       it "orders results by multiple fields in different directions" do
-        items = UserSearch.call('username:doe', order_by: 'created_at ASC, id')
+        items = SearchUsers.call('username:DoE', order_by: 'cReAtEd_At AsC, iD')
                           .outputs[:items]
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
@@ -66,8 +66,11 @@ module OpenStax
         jack_index = items.index(jack_doe)
         expect(jane_index).to be > john_index
         expect(jack_index).to be > jane_index
+        items.each do |item|
+          expect(item.username).to match(/\Adoe[\w]*\z/i)
+        end
 
-        items = UserSearch.call('username:doe', order_by: 'created_at DESC, id DESC')
+        items = SearchUsers.call('username:dOe', order_by: 'CrEaTeD_aT dEsC, Id DeSc')
                           .outputs[:items]
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
@@ -77,26 +80,29 @@ module OpenStax
         jack_index = items.index(jack_doe)
         expect(jane_index).to be < john_index
         expect(jack_index).to be < jane_index
+        items.each do |item|
+          expect(item.username).to match(/\Adoe[\w]*\z/i)
+        end
       end
 
       it "paginates results" do
-        all_items = UserSearch.call('').outputs[:items].to_a
+        all_items = SearchUsers.call('').outputs[:items].to_a
 
-        items = UserSearch.call('', per_page: 20).outputs[:items]
+        items = SearchUsers.call('', per_page: 20).outputs[:items]
         expect(items.limit(nil).offset(nil).count).to eq all_items.count
         expect(items.limit(nil).offset(nil).to_a).to eq all_items
         expect(items.count).to eq 20
         expect(items.to_a).to eq all_items[0..19]
 
         for page in 1..5
-          items = UserSearch.call('', page: page, per_page: 20).outputs[:items]
+          items = SearchUsers.call('', page: page, per_page: 20).outputs[:items]
           expect(items.limit(nil).offset(nil).count).to eq all_items.count
           expect(items.limit(nil).offset(nil).to_a).to eq all_items
           expect(items.count).to eq 20
           expect(items.to_a).to eq all_items.slice(20*(page-1), 20)
         end
 
-        items = UserSearch.call('', page: 1000, per_page: 20).outputs[:items]
+        items = SearchUsers.call('', page: 1000, per_page: 20).outputs[:items]
         expect(items.limit(nil).offset(nil).count).to eq all_items.count
         expect(items.limit(nil).offset(nil).to_a).to eq all_items
         expect(items.count).to eq 0

@@ -1,6 +1,6 @@
-# Routine for testing the general keyword searching
+# Dummy routine for testing the general keyword search
 
-class UserSearch < OpenStax::Utilities::AbstractKeywordSearch
+class SearchUsers < OpenStax::Utilities::AbstractKeywordSearchRoutine
   self.initial_relation = User.unscoped
   self.search_proc = lambda { |with|
     with.keyword :username do |names|
