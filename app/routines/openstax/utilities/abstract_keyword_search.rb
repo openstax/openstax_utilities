@@ -1,4 +1,4 @@
-# Routine for general keyword searching
+# Database-agnostic keyword searching routine
 #
 # Keywords have the format keyword:value
 # Keywords can also be negated with -, as in -keyword:value
@@ -12,10 +12,12 @@
 #   initial_relation is the ActiveRecord::Relation that contains
 #   all records to be searched, usually ClassName.unscoped
 #
-#   search_proc is a lambda that is passed 2 arguments:
-#     The first argument is the `with` object from keyword_search
-#     The second argument contains the relation to be scoped based on the search query
-#   The search_proc must define the `keyword` blocks for keyword_search
+#   search_proc is a proc passed to keyword_search's `search` method
+#   It receives keyword_search's `with` object as argument
+#   This proc must define the `keyword` blocks for keyword_search
+#   The relation to be scoped is contained in the @items instance variable
+#
+#   The `sanitize_names` helper can help with parsing strings from the query
 #
 #   sortable_fields_map is a Hash that maps the lowercase names of fields that can
 #   be used to sort the results to symbols for their respective database columns
@@ -43,16 +45,19 @@
 #
 #   outputs[:items] - an ActiveRecord::Relation that matches the query terms and options
 #
-# You can obtain the total count of records that matched the query terms like so:
+# You can use the following expression to obtain the
+# total count of records that matched the query terms:
 #
-#   outputs[:items].limit(nil).count
+#   outputs[:items].limit(nil).offset(nil).count
+#
+# See spec/dummy/app/routines/user_search.rb for an example search routine
 
 require 'lev'
 require 'keyword_search'
 
 module OpenStax
   module Utilities
-    class KeywordSearch
+    class AbstractKeywordSearch
 
       lev_routine transaction: :no_transaction
 
@@ -64,30 +69,30 @@ module OpenStax
         raise NotImplementedError if initial_relation.nil? || \
           search_proc.nil? || sortable_fields_map.nil?
 
-        items = initial_relation
+        @items = initial_relation
 
-        return items.none unless query.is_a? String
+        return @items.none unless query.is_a? String
 
         # Scoping
 
         KeywordSearch.search(query) do |with|
-          search_proc.call(with, items)
+          instance_exec(with, &search_proc)
         end
 
         # Ordering
 
         order_bys = sanitize_order_bys(options[:order_by])
-        items = items.order(order_bys)
+        @items = @items.order(order_bys)
         
         # Pagination
 
         per_page = Integer(options[:per_page]) rescue nil
         unless per_page.nil?
           page = Integer(options[:page]) rescue 1
-          items = items.limit(per_page).offset(per_page*(page-1))
+          @items = @items.limit(per_page).offset(per_page*(page-1))
         end
 
-        outputs[:items] = items
+        outputs[:items] = @items
       end
 
       def sanitize_order_by(field, dir = nil)
@@ -117,6 +122,22 @@ module OpenStax
             sanitize_order_by(fd.first, fd.second)
           end
         end
+      end
+
+      # Parses and sanitizes a keyword string
+      # User-supplied wildcards are removed and strings are split on commas
+      # Then wildcards are appended or prepended if the append_wildcard or
+      # prepend_wildcard options are specified
+      def sanitize_names(names, options = {})
+        na = case names
+        when Array
+          names.collect{|name| name.gsub('%', '').split(',')}.flatten
+        else
+          names.to_s.gsub('%', '').split(',')
+        end
+        na = na.collect{|name| "#{name}%"} if options[:append_wildcard]
+        na = na.collect{|name| "%#{name}"} if options[:prepend_wildcard]
+        na
       end
 
     end

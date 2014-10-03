@@ -5,7 +5,7 @@ module OpenStax
 
     describe AccessPolicy do
 
-      let!(:user) { User.create }
+      let!(:user) { FactoryGirl.create :user }
 
       it 'responds to any _allowed? calls' do
         AccessPolicy.register(User, DummyAccessPolicy)
