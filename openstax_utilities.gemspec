@@ -18,6 +18,8 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", ">= 3.1"
+  s.add_dependency "lev"
+  s.add_dependency "keyword_search"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "rspec-rails"

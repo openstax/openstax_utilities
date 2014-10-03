@@ -47,6 +47,9 @@
 #
 #   outputs[:items].limit(nil).count
 
+require 'lev'
+require 'keyword_search'
+
 module OpenStax
   module Utilities
     class KeywordSearch
