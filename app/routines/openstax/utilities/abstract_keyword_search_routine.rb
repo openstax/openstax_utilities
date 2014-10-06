@@ -15,7 +15,7 @@
 #                 this proc must define the `keyword` blocks for keyword_search
 #                 the relation to be scoped is contained in the @items instance variable
 #
-#   The `sanitize_names` helper can help with parsing strings from the query
+#   The `to_string_array` helper can help with parsing strings from the query
 #
 #   sortable_fields_map - a Hash that maps the lowercase names of fields
 #                         which can be used to sort the results to symbols
@@ -127,20 +127,20 @@ module OpenStax
         end
       end
 
-      # Parses and sanitizes a keyword string
+      # Parses a keyword string into an array of strings
       # User-supplied wildcards are removed and strings are split on commas
       # Then wildcards are appended or prepended if the append_wildcard or
       # prepend_wildcard options are specified
-      def sanitize_names(names, options = {})
-        na = case names
+      def to_string_array(str, options = {})
+        sa = case str
         when Array
-          names.collect{|name| name.gsub('%', '').split(',')}.flatten
+          str.collect{|name| name.gsub('%', '').split(',')}.flatten
         else
-          names.to_s.gsub('%', '').split(',')
+          str.to_s.gsub('%', '').split(',')
         end
-        na = na.collect{|name| "#{name}%"} if options[:append_wildcard]
-        na = na.collect{|name| "%#{name}"} if options[:prepend_wildcard]
-        na
+        sa = sa.collect{|str| "#{str}%"} if options[:append_wildcard]
+        sa = sa.collect{|str| "%#{str}"} if options[:prepend_wildcard]
+        sa
       end
 
     end

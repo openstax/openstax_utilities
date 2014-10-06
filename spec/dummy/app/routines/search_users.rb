@@ -4,17 +4,17 @@ class SearchUsers < OpenStax::Utilities::AbstractKeywordSearchRoutine
   self.initial_relation = User.unscoped
   self.search_proc = lambda { |with|
     with.keyword :username do |names|
-      snames = sanitize_names(names, append_wildcard: true)
+      snames = to_string_array(names, append_wildcard: true)
       @items = @items.where{username.like_any snames}
     end
 
     with.keyword :first_name do |names|
-      snames = sanitize_names(names, append_wildcard: true)
+      snames = to_string_array(names, append_wildcard: true)
       @items = @items.where{name.like_any snames}
     end
 
     with.keyword :last_name do |names|
-      snames = sanitize_names(names, append_wildcard: true).collect{|name| "% #{name}"}
+      snames = to_string_array(names, append_wildcard: true).collect{|name| "% #{name}"}
       @items = @items.where{name.like_any snames}
     end
   }
