@@ -1,3 +1,9 @@
+require "openstax/utilities/classy_helper"
+require "openstax/utilities/helpers/misc"
+require "openstax/utilities/helpers/partials"
+require "openstax/utilities/helpers/action_list"
+require "openstax/utilities/helpers/datetime"
+
 module OpenStax::Utilities
   module OsuHelper
 
@@ -14,3 +20,5 @@ module OpenStax::Utilities
 
   end
 end
+
+ActionController::Base.send :helper, OpenStax::Utilities::OsuHelper

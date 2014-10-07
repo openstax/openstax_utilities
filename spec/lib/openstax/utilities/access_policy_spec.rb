@@ -1,11 +1,11 @@
-require 'spec_helper'
+require 'rails_helper'
 
 module OpenStax
   module Utilities
 
     describe AccessPolicy do
 
-      let!(:user) { User.create }
+      let!(:user) { FactoryGirl.create :user }
 
       it 'responds to any _allowed? calls' do
         AccessPolicy.register(User, DummyAccessPolicy)

@@ -9,15 +9,21 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 0) do
+ActiveRecord::Schema.define(version: 0) do
 
-  create_table "users", :force => true do |t|
-    t.string   "username"
-    t.string   "password_hash"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+  create_table "users", force: true do |t|
+    t.string   "username",      null: false
+    t.string   "password_hash", null: false
+    t.string   "name",          null: false
+    t.string   "email",         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
+
+  add_index "users", ["email"], name: "index_users_on_email"
+  add_index "users", ["name"], name: "index_users_on_name"
+  add_index "users", ["username"], name: "index_users_on_username"
 
 end
