@@ -24,6 +24,9 @@
 #                         in options[:order_by]
 #                         values are the corresponding database column names
 #                         that will be passed to the order() method
+#                         columns from other tables can be specified either
+#                         through Arel attributes (Class.arel_table[:column])
+#                         or through literal strings
 #
 # Callers of subclass routines provides a query argument and an options hash
 #
