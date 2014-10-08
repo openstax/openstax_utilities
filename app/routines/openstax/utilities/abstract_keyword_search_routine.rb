@@ -37,7 +37,7 @@
 #
 #       :order_by - list of fields to sort by, with optional sort directions
 #                   can be a String, Array of Strings or Array of Hashes
-#                   default: {"created_at" => :asc}
+#                   default: {:created_at => :asc}
 #
 #     Pagination:
 #
@@ -101,7 +101,14 @@ module OpenStax
       def sanitize_order_by(field, dir = nil)
         sanitized_field = sortable_fields_map[field.to_s.downcase] || :created_at
         sanitized_dir = dir.to_s.downcase == 'desc' ? :desc : :asc
-        {sanitized_field => sanitized_dir}
+        case sanitized_field
+        when Symbol
+          {sanitized_field => sanitized_dir}
+        when Arel::Attributes::Attribute
+          sanitized_field.send sanitized_dir
+        else
+          "#{sanitized_field.to_s} #{sanitized_dir.to_s.upcase}"
+        end
       end
 
       def sanitize_order_bys(order_bys)
