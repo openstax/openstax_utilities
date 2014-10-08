@@ -24,6 +24,10 @@ module OpenStax
         end
       end
 
+      it 'returns the searched class' do
+        expect(UsersSearch.search_class).to eq User
+      end
+
       it "passes its params to the search routine and sets the total_count output" do
         outputs = users_search.call(params: {q: 'username:dOe'}).outputs
         total_count = outputs[:total_count]

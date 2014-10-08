@@ -67,6 +67,11 @@ module OpenStax
 
       lev_routine transaction: :no_transaction
 
+      def self.search_class
+        raise NotImplementedError if initial_relation.nil?
+        initial_relation.base_class
+      end
+
       protected
 
       class_attribute :initial_relation, :search_proc, :sortable_fields_map

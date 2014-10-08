@@ -22,6 +22,10 @@ module OpenStax
         end
       end
 
+      it 'returns the searched class' do
+        expect(SearchUsers.search_class).to eq User
+      end
+
       it "filters results based on one field" do
         items = SearchUsers.call('last_name:dOe').outputs[:items]
 

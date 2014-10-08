@@ -54,6 +54,11 @@ module OpenStax
 
       lev_handler
 
+      def self.search_class
+        raise NotImplementedError if search_routine.nil?
+        search_routine.search_class
+      end
+
       protected
 
       class_attribute :search_routine, :max_items, :min_characters
