@@ -5,12 +5,12 @@
 # Values are comma-separated, while keywords are space-separated
 # See https://github.com/bruce/keyword_search for more information
 #
-# Subclasses must set the search_routine class variable,
-# as well as the authorized? method
+# Callers must pass the search_routine and search_relation options:
 #
 # Required:
 #
-#   search_routine - the Lev::Routine that will handle the search
+#   search_routine  - the Lev::Routine that will handle the search
+#   search_relation - the ActiveRecord::Relation that will be searched
 #
 # Optional (recommended to prevent scraping):
 #
@@ -19,13 +19,13 @@
 #                    than the minimum number of characters allowed
 #                    default: nil (disabled)
 #
-#   max_items - the maximum number of matching items allowed to be returned
-#               no results will be returned if this number is exceeded,
-#               but the total result count will still be returned
-#               applies even if pagination is enabled
-#               default: nil (disabled)
+#   max_items      - the maximum number of matching items allowed to be returned
+#                    no results will be returned if this number is exceeded,
+#                    but the total result count will still be returned
+#                    applies even if pagination is enabled
+#                    default: nil (disabled)
 #
-# This handler expects the following parameters from the user or the UI:
+# This handler also expects the following parameters from the user or the UI:
 #
 # Required:
 #
@@ -50,40 +50,38 @@ require 'lev'
 
 module OpenStax
   module Utilities
-    class AbstractKeywordSearchHandler
+    class KeywordSearchHandler
 
       lev_handler
 
-      def self.search_class
-        raise NotImplementedError if search_routine.nil?
-        search_routine.search_class
-      end
-
       protected
 
-      class_attribute :search_routine, :max_items, :min_characters
-
       def authorized?
-        false
+        routine = options[:search_routine]
+        relation = options[:search_relation]
+        raise ArgumentError if routine.nil? || relation.nil?
+        OSU::AccessPolicy.action_allowed?(:search, caller, relation.base_class)
       end
 
       def handle
-        raise NotImplementedError if search_routine.nil?
-
-        query = params[:q] || params[:query]
-
-        fatal_error(code: :no_query,
+        query = params[:q]
+        fatal_error(code: :query_blank,
                     message: 'You must provide a query parameter (q or query).') if query.nil?
+
+        min_characters = options[:min_characters]
         fatal_error(code: :query_too_short,
                     message: "The provided query is too short (minimum #{
                       min_characters} characters).") \
           if !min_characters.nil? && query.length < min_characters
 
-        items = run(search_routine, query, params).outputs[:items]
+        routine = options[:search_routine]
+        relation = options[:search_relation]
+        items = run(routine, relation, query, params).outputs[:items]
 
         outputs[:total_count] = items.limit(nil).offset(nil).count
 
-        fatal_error(code: :too_many_matches,
+        max_items = options[:max_items]
+        fatal_error(code: :too_many_items,
                     message: "The number of matches exceeded the allowed limit of #{
                       max_items} matches. Please refine your query and try again.") \
           if !max_items.nil? && outputs[:total_count] > max_items

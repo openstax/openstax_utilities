@@ -5,17 +5,14 @@
 # Values are comma-separated, while keywords are space-separated
 # See https://github.com/bruce/keyword_search for more information
 #
-# Subclasses must set the initial_relation, search_proc and sortable_fields class variables
-#
-#   initial_relation - the ActiveRecord::Relation that contains all
-#                      records to be searched, usually ClassName.unscoped
+# Subclasses must set the search_proc and sortable_fields class variables
 #
 #   search_proc - a proc passed to keyword_search's `search` method
 #                 it receives keyword_search's `with` object as argument
 #                 this proc must define the `keyword` blocks for keyword_search
 #                 the relation to be scoped is contained in the @items instance variable
-#
-#   The `to_string_array` helper can help with parsing strings from the query
+#                 the `to_string_array` helper can help with
+#                 parsing strings from the query
 #
 #   sortable_fields_map - a Hash that maps the lowercase names of fields
 #                         which can be used to sort the results to symbols
@@ -28,10 +25,12 @@
 #                         through Arel attributes (Class.arel_table[:column])
 #                         or through literal strings
 #
-# Callers of subclass routines provides a query argument and an options hash
+# Callers of subclass routines provide a relation argument,
+# a query argument and an options hash
 #
 # Required arguments:
 #
+#   relation - the initial relation to start searching on
 #   query - a string that follows the keyword format above
 #
 # Options hash:
@@ -67,22 +66,17 @@ module OpenStax
 
       lev_routine transaction: :no_transaction
 
-      def self.search_class
-        raise NotImplementedError if initial_relation.nil?
-        initial_relation.base_class
-      end
-
       protected
 
-      class_attribute :initial_relation, :search_proc, :sortable_fields_map
+      class_attribute :search_proc, :sortable_fields_map
 
-      def exec(query, options = {})
-        raise NotImplementedError if initial_relation.nil? || \
-          search_proc.nil? || sortable_fields_map.nil?
+      def exec(relation, query, options = {})
+        raise NotImplementedError if search_proc.nil? || sortable_fields_map.nil?
 
-        @items = initial_relation
+        raise ArgumentError \
+          unless relation.is_a?(ActiveRecord::Relation) && query.is_a?(String)
 
-        return @items.none unless query.is_a? String
+        @items = relation
 
         # Scoping
 
