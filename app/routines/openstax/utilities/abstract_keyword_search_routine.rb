@@ -5,17 +5,14 @@
 # Values are comma-separated, while keywords are space-separated
 # See https://github.com/bruce/keyword_search for more information
 #
-# Subclasses must set the initial_relation, search_proc and sortable_fields class variables
-#
-#   initial_relation - the ActiveRecord::Relation that contains all
-#                      records to be searched, usually ClassName.unscoped
+# Subclasses must set the search_proc and sortable_fields class variables
 #
 #   search_proc - a proc passed to keyword_search's `search` method
 #                 it receives keyword_search's `with` object as argument
 #                 this proc must define the `keyword` blocks for keyword_search
 #                 the relation to be scoped is contained in the @items instance variable
-#
-#   The `to_string_array` helper can help with parsing strings from the query
+#                 the `to_string_array` helper can help with
+#                 parsing strings from the query
 #
 #   sortable_fields_map - a Hash that maps the lowercase names of fields
 #                         which can be used to sort the results to symbols
@@ -24,11 +21,16 @@
 #                         in options[:order_by]
 #                         values are the corresponding database column names
 #                         that will be passed to the order() method
+#                         columns from other tables can be specified either
+#                         through Arel attributes (Class.arel_table[:column])
+#                         or through literal strings
 #
-# Callers of subclass routines provides a query argument and an options hash
+# Callers of subclass routines provide a relation argument,
+# a query argument and an options hash
 #
 # Required arguments:
 #
+#   relation - the initial relation to start searching on
 #   query - a string that follows the keyword format above
 #
 # Options hash:
@@ -37,7 +39,7 @@
 #
 #       :order_by - list of fields to sort by, with optional sort directions
 #                   can be a String, Array of Strings or Array of Hashes
-#                   default: {"created_at" => :asc}
+#                   default: {:created_at => :asc}
 #
 #     Pagination:
 #
@@ -66,15 +68,15 @@ module OpenStax
 
       protected
 
-      class_attribute :initial_relation, :search_proc, :sortable_fields_map
+      class_attribute :search_proc, :sortable_fields_map
 
-      def exec(query, options = {})
-        raise NotImplementedError if initial_relation.nil? || \
-          search_proc.nil? || sortable_fields_map.nil?
+      def exec(relation, query, options = {})
+        raise NotImplementedError if search_proc.nil? || sortable_fields_map.nil?
 
-        @items = initial_relation
+        raise ArgumentError \
+          unless relation.is_a?(ActiveRecord::Relation) && query.is_a?(String)
 
-        return @items.none unless query.is_a? String
+        @items = relation
 
         # Scoping
 
@@ -101,7 +103,14 @@ module OpenStax
       def sanitize_order_by(field, dir = nil)
         sanitized_field = sortable_fields_map[field.to_s.downcase] || :created_at
         sanitized_dir = dir.to_s.downcase == 'desc' ? :desc : :asc
-        {sanitized_field => sanitized_dir}
+        case sanitized_field
+        when Symbol
+          {sanitized_field => sanitized_dir}
+        when Arel::Attributes::Attribute
+          sanitized_field.send sanitized_dir
+        else
+          "#{sanitized_field.to_s} #{sanitized_dir.to_s.upcase}"
+        end
       end
 
       def sanitize_order_bys(order_bys)
