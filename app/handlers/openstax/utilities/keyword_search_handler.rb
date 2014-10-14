@@ -66,7 +66,7 @@ module OpenStax
       def handle
         query = params[:q]
         fatal_error(code: :query_blank,
-                    message: 'You must provide a query parameter (q or query).') if query.nil?
+                    message: 'You must provide a query parameter (q).') if query.nil?
 
         min_characters = options[:min_characters]
         fatal_error(code: :query_too_short,
