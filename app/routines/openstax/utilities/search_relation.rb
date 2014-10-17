@@ -67,6 +67,13 @@ module OpenStax
         sa
       end
 
+      # Parses a keyword string into an array of numbers
+      # User-supplied wildcards are removed and strings are split on commas
+      # Only numbers are returned
+      def to_number_array(str)
+        to_string_array(str).collect{|s| Integer(s) rescue nil}.compact
+      end
+
     end
 
   end
