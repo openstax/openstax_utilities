@@ -1,7 +1,9 @@
-# Dummy routine for testing the general keyword search
+# Convenience constants for testing the search routines
 
-class SearchUsers < OpenStax::Utilities::AbstractKeywordSearchRoutine
-  self.search_proc = lambda { |with|
+class SearchUsers
+  RELATION = User.unscoped
+
+  SEARCH_PROC = lambda { |with|
     with.keyword :username do |names|
       snames = to_string_array(names, append_wildcard: true)
       @items = @items.where{username.like_any snames}
@@ -17,5 +19,8 @@ class SearchUsers < OpenStax::Utilities::AbstractKeywordSearchRoutine
       @items = @items.where{name.like_any snames}
     end
   }
-  self.sortable_fields_map = {'name' => :name, 'created_at' => :created_at, 'id' => :id}
+
+  SORTABLE_FIELDS = {'name' => :name, 'created_at' => :created_at, 'id' => :id}
+
+  MAX_ITEMS = 50
 end
