@@ -9,6 +9,7 @@
 # Required arguments:
 #
 #   Developer-supplied:
+#
 #   relation    - the initial ActiveRecord::Relation to start searching on
 #   search_proc - a Proc passed to keyword_search's `search` method
 #                 it receives keyword_search's `with` object as argument
@@ -18,6 +19,7 @@
 #                 parsing strings from the query
 #
 #   User or developer-supplied:
+#
 #   query       - a String that follows the keyword format
 #                 Keywords have the format keyword:value
 #                 Keywords can also be negated with -, as in -keyword:value
@@ -38,9 +40,16 @@ module OpenStax
 
       protected
 
-      def exec(relation:, search_proc:, query:)
+      def exec(*args, &search_proc)
 
-        @items = relation
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        @items = options[:relation] || args[0]
+        query = options[:query] || args[1]
+        search_proc ||= options[:search_proc] || args[2]
+
+        raise ArgumentError, 'You must specify a :relation option' if @items.nil?
+        raise ArgumentError, 'You must specify a block or :search_proc option' \
+          if search_proc.nil?
 
         # Scoping
 

@@ -8,15 +8,22 @@
 # Required arguments:
 #
 #   Developer-supplied:
+#
 #   relation        - the ActiveRecord::Relation to be ordered
+#
 #   sortable_fields - list of fields that can appear in the order_by argument
 #                     can be a Hash that maps field names to database columns
 #                     or an Array of Strings
+#                     invalid fields in order_by will be replaced with
+#                     the first field listed here, in :asc order
+#
+# Optional arguments:
 #
 #   User or developer-supplied:
+#
 #   order_by        - list of fields to order by, with optional sort directions
 #                     can be (an Array of) Hashes, or Strings
-#                     default: {:created_at => :asc}
+#                     default: {sortable_fields.values.first => :asc}
 #
 # This routine's outputs contain:
 #
@@ -32,7 +39,17 @@ module OpenStax
 
       protected
 
-      def exec(relation:, sortable_fields:, order_by:)
+      def exec(*args)
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        relation = options[:relation] || args[0]
+        sortable_fields = options[:sortable_fields] || args[1]
+        order_by = options[:order_by] || args[2]
+
+        raise ArgumentError, 'You must specify a :relation option' \
+          if relation.nil?
+        raise ArgumentError, 'You must specify a :sortable_fields option' \
+          if sortable_fields.nil?
+
         # Convert sortable_fields to Hash if it's an Array
         sortable_fields = Hash[*sortable_fields.collect{|s| [s.to_s, s]}] \
           if sortable_fields.is_a? Array
@@ -43,8 +60,9 @@ module OpenStax
       end
 
       # Returns an order_by Object
-      def sanitize_order_by(sortable_fields, field, dir = nil)
-        sanitized_field = sortable_fields[field.to_s.downcase] || :created_at
+      def sanitize_order_by(sortable_fields, field = nil, dir = nil)
+        sanitized_field = sortable_fields[field.to_s.downcase] || \
+                            sortable_fields.values.first
         sanitized_dir = dir.to_s.downcase == 'desc' ? :desc : :asc
         case sanitized_field
         when Symbol
@@ -57,8 +75,8 @@ module OpenStax
       end
 
       # Returns an Array of order_by Objects
-      def sanitize_order_bys(sortable_fields, order_bys)
-        case order_bys
+      def sanitize_order_bys(sortable_fields, order_bys = nil)
+        obs = case order_bys
         when Array
           order_bys.collect do |ob|
             case ob
@@ -78,6 +96,7 @@ module OpenStax
             sanitize_order_by(sortable_fields, fd.first, fd.second)
           end
         end
+        obs.blank? ? sanitize_order_by(sortable_fields) : obs
       end
 
     end

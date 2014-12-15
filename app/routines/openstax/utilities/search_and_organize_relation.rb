@@ -15,9 +15,10 @@
 # the order_by, per_page and page arguments in the params hash
 # Users must also be authorized to search the base class of the search_routine
 #
-# Required:
+# Required arguments:
 #
 #   Developer-supplied:
+#
 #   relation        - the initial ActiveRecord::Relation to start searching on
 #   search_proc     - a Proc passed to keyword_search's `search` method
 #                     it receives keyword_search's `with` object as argument
@@ -25,19 +26,24 @@
 #                     the relation to be scoped is contained in the @items instance variable
 #                     the `to_string_array` helper can help with
 #                     parsing strings from the query
+#
 #   sortable_fields - list of fields that can appear in the order_by argument
 #                     can be a Hash that maps field names to database columns
 #                     or an Array of Strings
+#                     invalid fields in order_by will be replaced with
+#                     the first field listed here, in :asc order
 #
 #   User or UI-supplied:
-#   params[:q]      - a String that follows the keyword format
+#
+#   params[:query]  - a String that follows the keyword format
 #                     Keywords have the format keyword:value
 #                     Keywords can also be negated with -, as in -keyword:value
-#                     Values are comma-separated, while keywords are space-separated
+#                     Values are comma-separated; keywords are space-separated
 #
-# Optional:
+# Optional arguments:
 #
 #   Developer-supplied (recommended to prevent scraping):
+#
 #   max_items         - the maximum number of matching items allowed to be returned
 #                       no results will be returned if this number is exceeded,
 #                       but the total result count will still be returned
@@ -45,9 +51,10 @@
 #                       default: nil (disabled)
 #
 #   User or UI-supplied:
+#
 #   params[:order_by] - list of fields to order by, with optional sort directions
 #                       can be (an Array of) Hashes, or Strings
-#                       default: {:created_at => :asc}
+#                       default: {sortable_fields.values.first => :asc}
 #
 #   params[:per_page] - the maximum number of search results per page
 #                       default: nil (disabled)
@@ -74,25 +81,47 @@ module OpenStax
       uses_routine LimitAndPaginateRelation,
                    as: :limit_and_paginate,
                    errors_are_fatal: false,
-                   translations: {outputs: {type: :verbatim}}
+                   translations: { inputs: { type: :verbatim },
+                                   outputs: { type: :verbatim } }
 
       protected
 
-      def exec(relation:, search_proc:, sortable_fields:, params:, max_items: nil)
+      def exec(*args, &search_proc)
+
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        relation = options[:relation] || args[0]
+        sortable_fields = options[:sortable_fields] || args[1]
+        params = options[:params] || args[2]
+        search_proc ||= options[:search_proc] || args[3]
+        max_items = options[:max_items] || nil
+
+        raise ArgumentError, 'You must specify a :relation option' \
+          if relation.nil?
+        raise ArgumentError, 'You must specify a :sortable_fields option' \
+          if sortable_fields.nil?
+        raise ArgumentError, 'You must specify a :params option' if params.nil?
+        raise ArgumentError, 'You must specify a block or :search_proc option' \
+          if search_proc.nil?
+
+        query = params[:query] || params[:q]
+        order_by = params[:order_by] || params[:ob]
+        per_page = params[:per_page] || params[:pp]
+        page = params[:page] || params[:p]
+
         items = run(:search, relation: relation, search_proc: search_proc,
-                    query: params[:q]).outputs[:items]
+                    query: query).outputs[:items]
 
         items = run(:order, relation: items, sortable_fields: sortable_fields,
-                    order_by: params[:order_by]).outputs[:items]
+                    order_by: order_by).outputs[:items]
 
-        if max_items.nil? && params[:per_page].nil?
+        if max_items.nil? && per_page.nil? && page.nil?
           outputs[:items] = items
           outputs[:total_count] = items.count
           return
         end
 
         run(:limit_and_paginate, relation: items, max_items: max_items,
-            per_page: params[:per_page], page: params[:page])
+            per_page: per_page, page: page)
       end
 
     end
