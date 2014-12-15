@@ -20,7 +20,7 @@ class SearchUsers
     end
   }
 
-  SORTABLE_FIELDS = {'name' => :name, 'created_at' => :created_at, 'id' => :id}
+  SORTABLE_FIELDS = {'id' => :id, 'name' => :name, 'created_at' => :created_at}
 
   MAX_ITEMS = 50
 end
