@@ -2,7 +2,14 @@ require 'rails_helper'
 
 module OpenStax
   module Utilities
-    describe AbstractKeywordSearchRoutine do
+    describe SearchAndOrganizeRelation do
+
+      OPTIONS = {
+        relation: SearchUsers::RELATION,
+        search_proc: SearchUsers::SEARCH_PROC,
+        sortable_fields: SearchUsers::SORTABLE_FIELDS,
+        max_items: SearchUsers::MAX_ITEMS
+      }
 
       let!(:john_doe) { FactoryGirl.create :user, name: "John Doe",
                                            username: "doejohn",
@@ -22,8 +29,9 @@ module OpenStax
         end
       end
 
-      it "filters results based on one field" do
-        items = SearchUsers.call(User.unscoped, 'last_name:dOe').outputs[:items]
+      it "filters results" do
+        items = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
+                  q: 'last_name:dOe'})).outputs[:items]
 
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
@@ -31,11 +39,9 @@ module OpenStax
         items.each do |item|
           expect(item.name.downcase).to match(/\A[\w]* doe[\w]*\z/i)
         end
-      end
 
-      it "filters results based on multiple fields" do
-        items = SearchUsers.call(User.unscoped, 'first_name:jOhN last_name:DoE')
-                           .outputs[:items]
+        items = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
+                  q: 'first_name:jOhN last_name:DoE'})).outputs[:items]
 
         expect(items).to include(john_doe)
         expect(items).not_to include(jane_doe)
@@ -43,11 +49,9 @@ module OpenStax
         items.each do |item|
           expect(item.name).to match(/\Ajohn[\w]* doe[\w]*\z/i)
         end
-      end
 
-      it "filters results based on multiple keywords per field" do
-        items = SearchUsers.call(User.unscoped, 'first_name:JoHn,JaNe last_name:dOe')
-                           .outputs[:items]
+        items = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
+                  q: 'first_name:JoHn,JaNe last_name:dOe'})).outputs[:items]
 
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
@@ -57,22 +61,10 @@ module OpenStax
         end
       end
 
-      it "filters scoped results" do
-        items = SearchUsers.call(User.where{name.like 'jOhN%'},
-                                 'last_name:dOe').outputs[:items]
-
-        expect(items).to include(john_doe)
-        expect(items).not_to include(jane_doe)
-        expect(items).not_to include(jack_doe)
-        items.each do |item|
-          expect(item.name.downcase).to match(/\Ajohn[\w]* doe[\w]*\z/i)
-        end
-      end
-
-      it "orders results by multiple fields in different directions" do
-        items = SearchUsers.call(User.unscoped, 'username:DoE',
-                                 order_by: 'cReAtEd_At AsC, iD')
-                          .outputs[:items]
+      it "orders results" do
+        items = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
+                    order_by: 'cReAtEd_At AsC, iD',
+                    q: 'username:dOe'})).outputs[:items].to_a
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
         expect(items).to include(jack_doe)
@@ -81,13 +73,10 @@ module OpenStax
         jack_index = items.index(jack_doe)
         expect(jane_index).to be > john_index
         expect(jack_index).to be > jane_index
-        items.each do |item|
-          expect(item.username).to match(/\Adoe[\w]*\z/i)
-        end
 
-        items = SearchUsers.call(User.unscoped, 'username:dOe',
-                                 order_by: 'CrEaTeD_aT dEsC, Id DeSc')
-                          .outputs[:items]
+        items = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
+                  order_by: 'CrEaTeD_aT dEsC, Id DeSc',
+                  q: 'username:dOe'})).outputs[:items].to_a
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
         expect(items).to include(jack_doe)
@@ -96,31 +85,49 @@ module OpenStax
         jack_index = items.index(jack_doe)
         expect(jane_index).to be < john_index
         expect(jack_index).to be < jane_index
-        items.each do |item|
-          expect(item.username).to match(/\Adoe[\w]*\z/i)
-        end
+      end
+
+      it "returns nothing if too many results" do
+        routine = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
+                    q: ''}))
+        outputs = routine.outputs
+        errors = routine.errors
+        expect(outputs).not_to be_empty
+        expect(outputs[:total_count]).to eq User.count
+        expect(outputs[:items]).to be_empty
+        expect(errors).not_to be_empty
+        expect(errors.first.code).to eq :too_many_items
       end
 
       it "paginates results" do
-        all_items = SearchUsers.call(User.unscoped, '').outputs[:items].to_a
+        all_items = SearchUsers::RELATION.to_a
 
-        items = SearchUsers.call(User.unscoped, '', per_page: 20).outputs[:items]
-        expect(items.limit(nil).offset(nil).count).to eq all_items.count
+        items = SearchAndOrganizeRelation.call(OPTIONS
+                  .except(:max_items)
+                  .merge(params: {q: '',
+                                  per_page: 20})).outputs[:items]
+        expect(items.limit(nil).offset(nil).count).to eq all_items.length
         expect(items.limit(nil).offset(nil).to_a).to eq all_items
         expect(items.count).to eq 20
         expect(items.to_a).to eq all_items[0..19]
 
         for page in 1..5
-          items = SearchUsers.call(User.unscoped, '', page: page, per_page: 20)
-                             .outputs[:items]
+          items = SearchAndOrganizeRelation.call(OPTIONS
+                    .except(:max_items)
+                    .merge(params: {q: '',
+                                    page: page,
+                                    per_page: 20})).outputs[:items]
           expect(items.limit(nil).offset(nil).count).to eq all_items.count
           expect(items.limit(nil).offset(nil).to_a).to eq all_items
           expect(items.count).to eq 20
           expect(items.to_a).to eq all_items.slice(20*(page-1), 20)
         end
 
-        items = SearchUsers.call(User.unscoped, '', page: 1000, per_page: 20)
-                           .outputs[:items]
+        items = SearchAndOrganizeRelation.call(OPTIONS
+                  .except(:max_items)
+                  .merge(params: {q: '',
+                                  page: 1000,
+                                  per_page: 20})).outputs[:items]
         expect(items.limit(nil).offset(nil).count).to eq all_items.count
         expect(items.limit(nil).offset(nil).to_a).to eq all_items
         expect(items.count).to eq 0
