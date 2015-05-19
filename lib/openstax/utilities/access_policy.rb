@@ -38,7 +38,7 @@ module OpenStax
         end
 
         resource_class = resource.is_a?(Class) ? resource : resource.class
-        policy_class = instance.resource_policy_map[resource_class.to_s]
+        policy_class = instance.resource_policy_map[resource_class.to_s].try(:constantize)
 
         # If there is no policy registered, we by default deny access
         return false if policy_class.nil?
@@ -47,7 +47,7 @@ module OpenStax
       end
 
       def self.register(resource_class, policy_class)
-        self.instance.resource_policy_map[resource_class.to_s] = policy_class
+        self.instance.resource_policy_map[resource_class.to_s] = policy_class.to_s
       end
 
     end
