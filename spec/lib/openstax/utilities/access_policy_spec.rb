@@ -24,30 +24,31 @@ module OpenStax
 
       it 'delegates checks to policy classes based on resource class' do
         dummy_object = double('Dummy')
-        dummy_policy = double('Dummy Policy', :action_allowed? => true)
 
         AccessPolicy.register(User, DummyAccessPolicy)
-        AccessPolicy.register(dummy_object.class, dummy_policy)
+        AccessPolicy.register(dummy_object.class, DummierAccessPolicy)
         
         DummyAccessPolicy.last_action = nil
         DummyAccessPolicy.last_requestor = nil
         DummyAccessPolicy.last_resource = nil
 
-        expect(AccessPolicy.action_allowed?(:read, user, dummy_object)).to(
-          eq(true))
-      
-        expect{AccessPolicy.require_action_allowed!(:read, user, dummy_object)
-          }.not_to raise_error
+        DummierAccessPolicy.last_action = nil
+        DummierAccessPolicy.last_requestor = nil
+        DummierAccessPolicy.last_resource = nil
 
-        expect(DummyAccessPolicy.last_action).to be_nil
-        expect(DummyAccessPolicy.last_requestor).to be_nil
-        expect(DummyAccessPolicy.last_resource).to be_nil
+        expect(AccessPolicy.action_allowed?(:read, user, dummy_object)).to eq true
+        expect{
+          AccessPolicy.require_action_allowed!(:read, user, dummy_object)
+        }.not_to raise_error
 
-        expect(AccessPolicy.action_allowed?(:create, user, User.new)).to(
-          eq(true))
+        expect(DummierAccessPolicy.last_action).to eq(:read)
+        expect(DummierAccessPolicy.last_requestor).to eq(user)
+        expect(DummierAccessPolicy.last_resource).to eq(dummy_object)
 
-        expect{AccessPolicy.require_action_allowed!(:create, user, User.new)
-          }.not_to raise_error
+        expect(AccessPolicy.action_allowed?(:create, user, User.new)).to eq true
+        expect{
+          AccessPolicy.require_action_allowed!(:create, user, User.new)
+        }.not_to raise_error
 
         expect(DummyAccessPolicy.last_action).to eq(:create)
         expect(DummyAccessPolicy.last_requestor).to eq(user)
