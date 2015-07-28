@@ -24,7 +24,8 @@ module OpenStax
       end
 
       def self.require_action_allowed!(action, requestor, resource)
-        raise SecurityTransgression unless action_allowed?(action, requestor, resource)
+        msg = "\"#{requestor.inspect}\" is not allowed to perform \"#{action}\" on \"#{resource.inspect}\""
+        raise(SecurityTransgression, msg) unless action_allowed?(action, requestor, resource)
       end
 
       def self.action_allowed?(action, requestor, resource)
