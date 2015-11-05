@@ -53,8 +53,13 @@ module OpenStax
 
         # Scoping
 
-        ::KeywordSearch.search(query.to_s) do |with|
-          instance_exec(with, &search_proc)
+        begin
+          ::KeywordSearch.search(query.to_s) do |with|
+            instance_exec(with, &search_proc)
+          end
+        rescue KeywordSearch::ParseError
+          fatal_error(code: :invalid_query,
+                      message: 'The search query string provided is invalid')
         end
 
         outputs[:items] = @items
