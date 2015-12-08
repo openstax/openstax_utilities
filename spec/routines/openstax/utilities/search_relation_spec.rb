@@ -25,7 +25,7 @@ module OpenStax
       it "filters results based on one field" do
         items = SearchRelation.call(relation: SearchUsers::RELATION,
                                     search_proc: SearchUsers::SEARCH_PROC,
-                                    query: 'last_name:dOe').outputs[:items]
+                                    query: 'last_name:dOe').items
 
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
@@ -38,8 +38,7 @@ module OpenStax
       it "filters results based on multiple fields" do
         items = SearchRelation.call(relation: SearchUsers::RELATION,
                                     search_proc: SearchUsers::SEARCH_PROC,
-                                    query: 'first_name:jOhN last_name:DoE')
-                              .outputs[:items]
+                                    query: 'first_name:jOhN last_name:DoE').items
 
         expect(items).to include(john_doe)
         expect(items).not_to include(jane_doe)
@@ -52,8 +51,7 @@ module OpenStax
       it "filters results based on multiple keywords per field" do
         items = SearchRelation.call(relation: SearchUsers::RELATION,
                                     search_proc: SearchUsers::SEARCH_PROC,
-                                    query: 'first_name:JoHn,JaNe last_name:dOe')
-                           .outputs[:items]
+                                    query: 'first_name:JoHn,JaNe last_name:dOe').items
 
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
@@ -66,7 +64,7 @@ module OpenStax
       it "filters scoped results" do
         items = SearchRelation.call(relation: User.where{name.like 'jOhN%'},
                                     search_proc: SearchUsers::SEARCH_PROC,
-                                    query: 'last_name:dOe').outputs[:items]
+                                    query: 'last_name:dOe').items
 
         expect(items).to include(john_doe)
         expect(items).not_to include(jane_doe)

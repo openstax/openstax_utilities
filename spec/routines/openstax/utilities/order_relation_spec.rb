@@ -27,8 +27,7 @@ module OpenStax
       it "orders results by multiple fields in different directions" do
         items = OrderRelation.call(relation: @relation,
                                    sortable_fields: SearchUsers::SORTABLE_FIELDS,
-                                   order_by: 'cReAtEd_At AsC, iD')
-                          .outputs[:items]
+                                   order_by: 'cReAtEd_At AsC, iD').items
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
         expect(items).to include(jack_doe)
@@ -40,8 +39,7 @@ module OpenStax
 
         items = OrderRelation.call(relation: @relation,
                                    sortable_fields: SearchUsers::SORTABLE_FIELDS,
-                                   order_by: 'CrEaTeD_aT dEsC, Id DeSc')
-                          .outputs[:items]
+                                   order_by: 'CrEaTeD_aT dEsC, Id DeSc').items
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
         expect(items).to include(jack_doe)

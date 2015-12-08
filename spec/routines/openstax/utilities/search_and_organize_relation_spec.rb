@@ -31,7 +31,7 @@ module OpenStax
 
       it "filters results" do
         items = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
-                  q: 'last_name:dOe'})).outputs[:items]
+                  q: 'last_name:dOe'})).items
 
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
@@ -41,7 +41,7 @@ module OpenStax
         end
 
         items = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
-                  q: 'first_name:jOhN last_name:DoE'})).outputs[:items]
+                  q: 'first_name:jOhN last_name:DoE'})).items
 
         expect(items).to include(john_doe)
         expect(items).not_to include(jane_doe)
@@ -51,7 +51,7 @@ module OpenStax
         end
 
         items = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
-                  q: 'first_name:JoHn,JaNe last_name:dOe'})).outputs[:items]
+                  q: 'first_name:JoHn,JaNe last_name:dOe'})).items
 
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
@@ -64,7 +64,7 @@ module OpenStax
       it "orders results" do
         items = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
                     order_by: 'cReAtEd_At AsC, iD',
-                    q: 'username:dOe'})).outputs[:items].to_a
+                    q: 'username:dOe'})).items.to_a
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
         expect(items).to include(jack_doe)
@@ -76,7 +76,7 @@ module OpenStax
 
         items = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
                   order_by: 'CrEaTeD_aT dEsC, Id DeSc',
-                  q: 'username:dOe'})).outputs[:items].to_a
+                  q: 'username:dOe'})).items.to_a
         expect(items).to include(john_doe)
         expect(items).to include(jane_doe)
         expect(items).to include(jack_doe)
@@ -88,13 +88,10 @@ module OpenStax
       end
 
       it "returns nothing if too many results" do
-        routine = SearchAndOrganizeRelation.call(OPTIONS.merge(params: {
-                    q: ''}))
-        outputs = routine.outputs
+        routine = SearchAndOrganizeRelation.call(OPTIONS.merge(params: { q: ''}))
         errors = routine.errors
-        expect(outputs).not_to be_empty
-        expect(outputs[:total_count]).to eq User.count
-        expect(outputs[:items]).to be_empty
+        expect(routine.total_count).to eq User.count
+        expect(routine.items).to be_empty
         expect(errors).not_to be_empty
         expect(errors.first.code).to eq :too_many_items
       end
@@ -104,8 +101,7 @@ module OpenStax
 
         items = SearchAndOrganizeRelation.call(OPTIONS
                   .except(:max_items)
-                  .merge(params: {q: '',
-                                  per_page: 20})).outputs[:items]
+                  .merge(params: {q: '', per_page: 20})).items
         expect(items.limit(nil).offset(nil).count).to eq all_items.length
         expect(items.limit(nil).offset(nil).to_a).to eq all_items
         expect(items.count).to eq 20
@@ -114,9 +110,7 @@ module OpenStax
         for page in 1..5
           items = SearchAndOrganizeRelation.call(OPTIONS
                     .except(:max_items)
-                    .merge(params: {q: '',
-                                    page: page,
-                                    per_page: 20})).outputs[:items]
+                    .merge(params: {q: '', page: page, per_page: 20})).items
           expect(items.limit(nil).offset(nil).count).to eq all_items.count
           expect(items.limit(nil).offset(nil).to_a).to eq all_items
           expect(items.count).to eq 20
@@ -125,9 +119,7 @@ module OpenStax
 
         items = SearchAndOrganizeRelation.call(OPTIONS
                   .except(:max_items)
-                  .merge(params: {q: '',
-                                  page: 1000,
-                                  per_page: 20})).outputs[:items]
+                  .merge(params: {q: '', page: 1000, per_page: 20})).items
         expect(items.limit(nil).offset(nil).count).to eq all_items.count
         expect(items.limit(nil).offset(nil).to_a).to eq all_items
         expect(items.count).to eq 0

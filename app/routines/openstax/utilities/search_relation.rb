@@ -36,7 +36,8 @@ module OpenStax
   module Utilities
     class SearchRelation
 
-      lev_routine transaction: :no_transaction
+      lev_routine outputs: { items: :_self },
+                  transaction: :no_transaction
 
       protected
 
@@ -62,7 +63,7 @@ module OpenStax
                       message: 'The search query string provided is invalid')
         end
 
-        outputs[:items] = @items
+        set(items: @items)
       end
 
       # Parses a keyword string into an array of strings

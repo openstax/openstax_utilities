@@ -35,7 +35,8 @@ module OpenStax
   module Utilities
     class OrderRelation
 
-      lev_routine transaction: :no_transaction
+      lev_routine outputs: { items: :_self },
+                  transaction: :no_transaction
 
       protected
 
@@ -56,7 +57,7 @@ module OpenStax
 
         # Ordering
         order_bys = sanitize_order_bys(sortable_fields, order_by)
-        outputs[:items] = relation.order(order_bys)
+        set(items: relation.order(order_bys))
       end
 
       # Returns an order_by Object
