@@ -27,11 +27,9 @@ module OpenStax
       it "returns nothing if too many results" do
         routine = LimitAndPaginateRelation.call(relation: @relation,
                                                 max_items: 10)
-        outputs = routine.outputs
         errors = routine.errors
-        expect(outputs).not_to be_empty
-        expect(outputs[:total_count]).to eq User.count
-        expect(outputs[:items]).to be_empty
+        expect(routine.total_count).to eq User.count
+        expect(routine.items).to be_empty
         expect(errors).not_to be_empty
         expect(errors.first.code).to eq :too_many_items
       end
@@ -40,7 +38,7 @@ module OpenStax
         all_items = @relation.to_a
 
         items = LimitAndPaginateRelation.call(relation: @relation,
-                                              per_page: 20).outputs[:items]
+                                              per_page: 20).items
         expect(items.limit(nil).offset(nil).count).to eq all_items.count
         expect(items.limit(nil).offset(nil).to_a).to eq all_items
         expect(items.count).to eq 20
@@ -49,8 +47,7 @@ module OpenStax
         for page in 1..5
           items = LimitAndPaginateRelation.call(relation: @relation,
                                                 page: page,
-                                                per_page: 20)
-                                          .outputs[:items]
+                                                per_page: 20).items
           expect(items.limit(nil).offset(nil).count).to eq all_items.count
           expect(items.limit(nil).offset(nil).to_a).to eq all_items
           expect(items.count).to eq 20
@@ -59,8 +56,7 @@ module OpenStax
 
         items = LimitAndPaginateRelation.call(relation: @relation,
                                               page: 1000,
-                                              per_page: 20)
-                                        .outputs[:items]
+                                              per_page: 20).items
         expect(items.limit(nil).offset(nil).count).to eq all_items.count
         expect(items.limit(nil).offset(nil).to_a).to eq all_items
         expect(items.count).to eq 0

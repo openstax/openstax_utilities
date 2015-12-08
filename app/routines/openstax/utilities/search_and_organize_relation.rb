@@ -72,17 +72,13 @@ module OpenStax
   module Utilities
     class SearchAndOrganizeRelation
 
-      lev_routine transaction: :no_transaction
-
-      uses_routine SearchRelation,
-                   as: :search
-      uses_routine OrderRelation,
-                   as: :order
-      uses_routine LimitAndPaginateRelation,
-                   as: :limit_and_paginate,
-                   errors_are_fatal: false,
-                   translations: { inputs: { type: :verbatim },
-                                   outputs: { type: :verbatim } }
+      lev_routine outputs: { total_count: :_self,
+                             items: :_self,
+                             _verbatim: { name: LimitAndPaginateRelation,
+                                          as: :limit_and_paginate } },
+                  transaction: :no_transaction,
+                  uses: [{ name: SearchRelation, as: :search },
+                         { name: OrderRelation, as: :order }]
 
       protected
 
@@ -109,19 +105,22 @@ module OpenStax
         page = params[:page] || params[:p]
 
         items = run(:search, relation: relation, search_proc: search_proc,
-                    query: query).outputs[:items]
+                    query: query).items
 
         items = run(:order, relation: items, sortable_fields: sortable_fields,
-                    order_by: order_by).outputs[:items]
+                    order_by: order_by).items
 
         if max_items.nil? && per_page.nil? && page.nil?
-          outputs[:items] = items
-          outputs[:total_count] = items.count
+          set(items: items)
+          set(total_count: items.count)
           return
         end
 
-        run(:limit_and_paginate, relation: items, max_items: max_items,
-            per_page: per_page, page: page)
+        result = run(:limit_and_paginate, relation: items,
+                                          max_items: max_items,
+                                          per_page: per_page,
+                                          page: page)
+        transfer_errors_from(result)
       end
 
     end

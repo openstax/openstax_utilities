@@ -26,7 +26,6 @@
 #               default: nil (disabled)
 #   page      - the number of the page to return
 #               default: 1
-#
 # This routine's outputs contain:
 #
 #   outputs[:total_count] - the total number of items in the relation
@@ -39,7 +38,9 @@ module OpenStax
   module Utilities
     class LimitAndPaginateRelation
 
-      lev_routine transaction: :no_transaction
+      lev_routine outputs: { total_count: :_self,
+                             items: :_self },
+                  transaction: :no_transaction
 
       protected
 
@@ -61,9 +62,9 @@ module OpenStax
                     message: 'Invalid page number',
                     code: :invalid_page) if page < 1
 
-        outputs[:total_count] = relation.count
+        set(total_count: relation.count)
 
-        if !max_items.nil? && outputs[:total_count] > max_items
+        if !max_items.nil? && result.total_count > max_items
           # Limiting
           relation = relation.none
           nonfatal_error(code: :too_many_items,
@@ -76,7 +77,7 @@ module OpenStax
           relation = relation.limit(per_page).offset(per_page*(page-1))
         end
 
-        outputs[:items] = relation
+        set(items: relation)
       end
 
     end

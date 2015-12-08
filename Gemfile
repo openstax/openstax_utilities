@@ -12,3 +12,5 @@ gemspec
 
 # To use debugger
 # gem 'debugger'
+
+gem 'lev', github: 'lml/lev', branch: 'ground-up-exercise'
