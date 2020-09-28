@@ -3,22 +3,22 @@
 class SearchUsers
   RELATION = User.unscoped
 
-  SEARCH_PROC = lambda { |with|
+  SEARCH_PROC = ->(with) do
     with.keyword :username do |names|
       snames = to_string_array(names, append_wildcard: true)
-      @items = @items.where{username.like_any snames}
+      @items = @items.where(@items.arel_table[:username].matches_any(snames))
     end
 
     with.keyword :first_name do |names|
       snames = to_string_array(names, append_wildcard: true)
-      @items = @items.where{name.like_any snames}
+      @items = @items.where(@items.arel_table[:name].matches_any(snames))
     end
 
     with.keyword :last_name do |names|
-      snames = to_string_array(names, append_wildcard: true).collect{|name| "% #{name}"}
-      @items = @items.where{name.like_any snames}
+      snames = to_string_array(names, append_wildcard: true).map { |name| "% #{name}" }
+      @items = @items.where(@items.arel_table[:name].matches_any(snames))
     end
-  }
+  end
 
   SORTABLE_FIELDS = {'id' => :id, 'name' => :name, 'created_at' => :created_at}
 

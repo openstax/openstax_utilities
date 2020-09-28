@@ -11,21 +11,21 @@ module OpenStax
         max_items: SearchUsers::MAX_ITEMS
       }
 
-      let!(:john_doe) { FactoryGirl.create :user, name: "John Doe",
+      let!(:john_doe) { FactoryBot.create :user, name: "John Doe",
                                            username: "doejohn",
                                            email: "john@doe.com" }
 
-      let!(:jane_doe) { FactoryGirl.create :user, name: "Jane Doe",
+      let!(:jane_doe) { FactoryBot.create :user, name: "Jane Doe",
                                            username: "doejane",
                                            email: "jane@doe.com" }
 
-      let!(:jack_doe) { FactoryGirl.create :user, name: "Jack Doe",
+      let!(:jack_doe) { FactoryBot.create :user, name: "Jack Doe",
                                            username: "doejack",
                                            email: "jack@doe.com" }
 
       before(:each) do
         100.times do
-          FactoryGirl.create(:user)
+          FactoryBot.create(:user)
         end
       end
 
