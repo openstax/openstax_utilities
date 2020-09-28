@@ -3,22 +3,21 @@ require 'rails_helper'
 module OpenStax
   module Utilities
     describe SearchRelation do
+      let!(:john_doe) do
+        FactoryBot.create :user, name: "John Doe", username: "doejohn", email: "john@doe.com"
+      end
 
-      let!(:john_doe) { FactoryGirl.create :user, name: "John Doe",
-                                           username: "doejohn",
-                                           email: "john@doe.com" }
+      let!(:jane_doe) do
+        FactoryBot.create :user, name: "Jane Doe", username: "doejane", email: "jane@doe.com"
+      end
 
-      let!(:jane_doe) { FactoryGirl.create :user, name: "Jane Doe",
-                                           username: "doejane",
-                                           email: "jane@doe.com" }
-
-      let!(:jack_doe) { FactoryGirl.create :user, name: "Jack Doe",
-                                           username: "doejack",
-                                           email: "jack@doe.com" }
+      let!(:jack_doe) do
+        FactoryBot.create :user, name: "Jack Doe", username: "doejack", email: "jack@doe.com"
+      end
 
       before(:each) do
         100.times do
-          FactoryGirl.create(:user)
+          FactoryBot.create(:user)
         end
       end
 
@@ -64,9 +63,11 @@ module OpenStax
       end
 
       it "filters scoped results" do
-        items = SearchRelation.call(relation: User.where{name.like 'jOhN%'},
-                                    search_proc: SearchUsers::SEARCH_PROC,
-                                    query: 'last_name:dOe').outputs[:items]
+        items = SearchRelation.call(
+          relation: User.where(User.arel_table[:name].matches('jOhN%')),
+          search_proc: SearchUsers::SEARCH_PROC,
+          query: 'last_name:dOe'
+        ).outputs[:items]
 
         expect(items).to include(john_doe)
         expect(items).not_to include(jane_doe)
@@ -75,7 +76,6 @@ module OpenStax
           expect(item.name.downcase).to match(/\Ajohn[\w]* doe[\w]*\z/i)
         end
       end
-
     end
   end
 end

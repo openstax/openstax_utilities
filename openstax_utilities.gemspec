@@ -17,13 +17,17 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
 
-  s.add_dependency "rails", ">= 3.1"
+  s.add_dependency "rails", "~> 5.2"
   s.add_dependency "lev"
   s.add_dependency "keyword_search"
+  s.add_dependency "request_store"
+  s.add_dependency "faraday"
+  s.add_dependency "faraday-http-cache"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "rspec-rails"
-  s.add_development_dependency "factory_girl_rails"
+  s.add_development_dependency "factory_bot_rails"
   s.add_development_dependency "faker"
-  s.add_development_dependency "squeel"
+  s.add_development_dependency "vcr"
+  s.add_development_dependency "webmock"
 end

@@ -19,6 +19,7 @@ require "openstax/utilities/acts_as_numberable"
 require "openstax/utilities/delegate_access_control"
 require "openstax/utilities/access_policy"
 require "openstax/utilities/osu_helper"
+require "openstax/utilities/assets"
 
 module OpenStax
   module Utilities
@@ -35,7 +36,7 @@ module OpenStax
       #
       # Configuration machinery.
       #
-      # To configure OpenStax Utilities, put the following code in your applications 
+      # To configure OpenStax Utilities, put the following code in your applications
       # initialization logic (eg. in the config/initializers in a Rails app)
       #
       #   OpenStax::Utilities.configure do |config|
@@ -43,7 +44,7 @@ module OpenStax
       #     ...
       #   end
       #
-      
+
       def configure
         yield configuration
       end
@@ -56,8 +57,8 @@ module OpenStax
         attr_accessor :standard_date_format
         attr_accessor :standard_datetime_format
         attr_accessor :standard_time_format
-        
-        def initialize      
+
+        def initialize
           @standard_date_format = "%b %d, %Y"
           @standard_datetime_format = "%b %d, %Y %l:%M %p %Z"
           @standard_time_format = "%l:%M %p %Z"
@@ -69,4 +70,3 @@ module OpenStax
 
   end
 end
-
