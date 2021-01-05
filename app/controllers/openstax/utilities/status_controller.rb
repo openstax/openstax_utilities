@@ -48,7 +48,7 @@ class OpenStax::Utilities::StatusController < ActionController::Base
           :ok
         end
 
-        [ name, asg.desired_capacity, asg.max_size, status ]
+        [ name, asg.instances.size, asg.max_size, status ]
       end.sort_by do |name, _, _, _|
         case name
         when 'migration'
