@@ -5,6 +5,8 @@ module OpenStax::Utilities
   module Assets
     # Reads and parses the assets manifest
     class Manifest
+      attr_reader :version
+
       def initialize
         @assets = HashWithIndifferentAccess.new
 
@@ -15,6 +17,8 @@ module OpenStax::Utilities
 
           if response.success?
             contents = JSON.parse response.body
+
+            @version = contents['version']
 
             if contents['entrypoints'].blank?
               Rails.logger.error { "failed to parse manifest from #{url}" }

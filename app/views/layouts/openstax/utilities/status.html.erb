@@ -1,0 +1,26 @@
+<% title = "OpenStax #{@application_name} (#{@environment_name}) Status" %>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <meta name="robots" content="noindex">
+    <meta http-equiv="content-type" content="text/html; charset=UTF8" />
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+    <%= csrf_meta_tags %>
+  </head>
+
+  <body id="status" class="status">
+    <header>
+      <h2 style="margin-left: 16px;"><%= title %></h2>
+    </header>
+
+    <div class="body" style="margin-left: 16px;">
+      <div class="body-container">
+        <%= yield %>
+      </div>
+    </div>
+  </body>
+</html>

@@ -2,6 +2,7 @@ require "openstax/utilities/action_list"
 
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'OpenStax'
+  inflect.acronym 'OSU'
 end
 
 module OpenStax
@@ -14,7 +15,7 @@ module OpenStax
       end
 
       config.generators do |g|
-        g.test_framework :rspec, :fixture => false
+        g.test_framework :rspec, fixture: false
         g.assets false
         g.helper false
       end

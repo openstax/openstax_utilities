@@ -14,8 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Shared utilities for OpenStax web sites"
   s.license     = "MIT"
 
-  s.files = Dir["{app,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
-  s.test_files = Dir["spec/**/*"]
+  s.files = Dir["{app,config,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
 
   s.add_dependency "rails", "~> 5.2"
   s.add_dependency "lev"
@@ -23,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency "request_store"
   s.add_dependency "faraday"
   s.add_dependency "faraday-http-cache"
+  s.add_dependency "aws-sdk-autoscaling"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "rspec-rails"
