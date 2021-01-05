@@ -31,9 +31,14 @@ end&.second %></h3>
 
 <ul>
   <% @statuses.map do |name, desired_capacity, max_size, status| %>
+    <% title = status.to_s.humanize %>
     <li>
-      <%= name.to_s.underscore.humanize %>: <%= desired_capacity %>/<%= max_size %> <%=
-        status_icons[status] || "(#{status.to_s.humanize})"
+      <%= name.to_s.underscore.humanize %>: <%= desired_capacity %>/<%= max_size %>
+      <% if status_icons.has_key? status %>
+        <span title="<%= title %>"><%= status_icons[status] %></span>
+      <% else %>
+        (<%= title %>)
+      <% end %>
       %>
     </li>
   <% end %>
