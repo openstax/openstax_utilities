@@ -1,0 +1,40 @@
+<%
+  status_icons = {
+    down: '💀',
+    configuration_error: '⚠️',
+    shutting_down: '😪',
+    at_capacity: '🥵',
+    scaling_down: '📉',
+    scaling_up: '📈',
+    migrating: '💾',
+    ok: '✅',
+    sleeping: '💤'
+  }
+
+  backend = @application_name == 'Tutor' ? 'tutor-server' : @application_name.downcase
+%>
+
+<h3>Versions</h3>
+
+<ul>
+  <li>
+    Backend (<%= backend %>): <%= Rails.application.secrets.release_version || 'not deployed' %>
+  </li>
+  <li>
+    Frontend (tutor-js): <%= OpenStax::Utilities::Assets.manifest.version || 'not deployed' %>
+  </li>
+</ul>
+
+<h3>Status <%= status_icons.find do |key, value|
+  @statuses.any? { |_, _, _, status| status == key }
+end&.second %></h3>
+
+<ul>
+  <% @statuses.map do |name, desired_capacity, max_size, status| %>
+    <li>
+      <%= name.to_s.underscore.humanize %>: <%= desired_capacity %>/<%= max_size %> <%=
+        status_icons[status] || "(#{status.to_s.humanize})"
+      %>
+    </li>
+  <% end %>
+</ul>
