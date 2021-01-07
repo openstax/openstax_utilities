@@ -63,7 +63,7 @@ module OpenStax
           @standard_date_format = "%b %d, %Y"
           @standard_datetime_format = "%b %d, %Y %l:%M %p %Z"
           @standard_time_format = "%l:%M %p %Z"
-          @status_authenticate = -> {}
+          @status_authenticate = -> { head :forbidden }
           super
         end
       end
