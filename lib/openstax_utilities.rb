@@ -57,11 +57,13 @@ module OpenStax
         attr_accessor :standard_date_format
         attr_accessor :standard_datetime_format
         attr_accessor :standard_time_format
+        attr_accessor :status_authenticate
 
         def initialize
           @standard_date_format = "%b %d, %Y"
           @standard_datetime_format = "%b %d, %Y %l:%M %p %Z"
           @standard_time_format = "%l:%M %p %Z"
+          @status_authenticate = -> { head :forbidden }
           super
         end
       end

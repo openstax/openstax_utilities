@@ -23,6 +23,11 @@
   <li>
     Frontend (tutor-js): <%= OpenStax::Utilities::Assets.manifest.version || 'not deployed' %>
   </li>
+  <li>
+    Deployment (tutor-deployment): <%=
+      Rails.application.secrets.deployment_version || 'not deployed'
+    %>
+  </li>
 </ul>
 
 <% status = status_icons.find { |key, _| @statuses.any? { |_, _, _, status| status == key } } %>

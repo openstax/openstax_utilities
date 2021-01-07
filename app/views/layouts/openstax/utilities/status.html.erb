@@ -13,12 +13,10 @@
   </head>
 
   <body id="status" class="status">
-    <header>
-      <h2 style="margin-left: 16px;"><%= title %></h2>
-    </header>
+    <div class="body">
+      <div class="body-container" style="margin-left: 16px;">
+        <header><h2><%= title %></h2></header>
 
-    <div class="body" style="margin-left: 16px;">
-      <div class="body-container">
         <%= yield %>
       </div>
     </div>
