@@ -1,6 +1,8 @@
 require 'aws-sdk-autoscaling'
 
 class OpenStax::Utilities::StatusController < ActionController::Base
+  before_action :authenticate
+
   layout 'openstax/utilities/status'
 
   def index
@@ -62,5 +64,11 @@ class OpenStax::Utilities::StatusController < ActionController::Base
         end
       end
     end
+  end
+
+  protected
+
+  def authenticate
+    instance_exec &OpenStax::Utilities.configuration.status_authenticate
   end
 end
