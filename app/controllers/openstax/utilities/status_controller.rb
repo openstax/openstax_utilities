@@ -27,17 +27,24 @@ class OpenStax::Utilities::StatusController < ActionController::Base
         ).chomp('-asg')
 
         status = if asg.desired_capacity == 0
-          if asg.instances.size > 0
-            :shutting_down
-          elsif [ 'web', 'background', 'cron' ].include?(name)
+          if [ 'web', 'background', 'cron' ].include?(name)
             :configuration_error
+          elsif asg.instances.size > 0
+            :shutting_down
           else
             :sleeping
           end
         elsif asg.instances.all? do |instance|
                 instance.health_status != 'Healthy' || instance.lifecycle_state != 'InService'
               end
-          :down
+          case name
+          when 'web'
+            :down
+          when 'background', 'cron'
+            :impacted
+          else
+            :offline
+          end
         elsif name == 'migration'
           :migrating
         elsif asg.max_size > 1 && asg.desired_capacity == asg.max_size
