@@ -18,7 +18,7 @@ rails = case rails_version
 when "master"
   {github: "rails/rails"}
 when "default"
-  ">= 5.2.4.4"
+  "~= 6.1.0"
 else
   "~> #{rails_version}"
 end
