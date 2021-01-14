@@ -11,7 +11,11 @@ module OpenStax
       isolate_namespace OpenStax::Utilities
 
       config.after_initialize do
-        OSU::SITE_NAME = ::Rails.application.class.parent_name.underscore
+        if Rails::VERSION::MAJOR == 6
+          OSU::SITE_NAME = ::Rails.application.class.module_parent_name.underscore
+        else
+          OSU::SITE_NAME = ::Rails.application.class.parent_name.underscore
+        end
       end
 
       config.generators do |g|
