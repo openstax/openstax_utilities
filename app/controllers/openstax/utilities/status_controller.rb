@@ -12,7 +12,8 @@ class OpenStax::Utilities::StatusController < ActionController::Base
     @statuses = if @environment_name == 'development'
       [ [ 'local', 1, 1, :ok ] ]
     else
-      queues = Delayed::Worker.queue_attributes.keys.map(&:to_s) - [ 'migration' ]
+      queues = Module.const_defined?(:Delayed) && Delayed.const_defined?(:Worker) ?
+        Delayed::Worker.queue_attributes.keys.map(&:to_s) - [ 'migration' ] : []
       asgs = [ 'migration', 'web', 'cron', 'background' ] + queues.map do |queue|
         "background-#{queue}"
       end
