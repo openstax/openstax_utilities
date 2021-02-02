@@ -6,7 +6,7 @@ class OpenStax::Utilities::StatusController < ActionController::Base
   layout 'openstax/utilities/status'
 
   def index
-    @application_name = Rails.application.class.parent_name
+    @application_name = OSU::SITE_NAME.humanize
     @environment_name = Rails.application.secrets.environment_name
 
     @statuses = if @environment_name == 'development'
