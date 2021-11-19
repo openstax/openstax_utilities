@@ -1,5 +1,5 @@
 module OpenStax
   module Utilities
-    VERSION = '4.5.2'
+    VERSION = '5.0.0'
   end
 end

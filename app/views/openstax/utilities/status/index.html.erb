@@ -20,14 +20,18 @@
 
 <ul>
   <li>
-    Backend (<%= backend %>): <%= Rails.application.secrets.release_version || 'not deployed' %>
+    Backend (<%= backend %>): <%=
+      OpenStax::Utilities.configuration.release_version || 'not deployed'
+    %>
   </li>
+  <% unless OpenStax::Utilities.configuration.assets_url.blank? %>
   <li>
     Frontend (tutor-js): <%= OpenStax::Utilities::Assets.manifest.version || 'not deployed' %>
   </li>
+  <% end %>
   <li>
     Deployment (tutor-deployment): <%=
-      Rails.application.secrets.deployment_version || 'not deployed'
+      OpenStax::Utilities.configuration.deployment_version || 'not deployed'
     %>
   </li>
 </ul>

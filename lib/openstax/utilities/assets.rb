@@ -4,7 +4,7 @@ require_relative 'assets/manifest'
 module OpenStax::Utilities
   module Assets
     def self.url
-      url = Rails.application.secrets.assets_url
+      url = OpenStax::Utilities.configuration.assets_url
       url.ends_with?('/') ? url : "#{url}/"
     end
 

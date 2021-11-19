@@ -23,7 +23,6 @@ require "openstax/utilities/assets"
 
 module OpenStax
   module Utilities
-
     # ASSET_FILES = %w(openstax_utilities.css openstax_utilities.js)
 
     # ActiveSupport.on_load(:before_initialize) do
@@ -31,7 +30,6 @@ module OpenStax
     # end
 
     class << self
-
       ###########################################################################
       #
       # Configuration machinery.
@@ -58,17 +56,22 @@ module OpenStax
         attr_accessor :standard_datetime_format
         attr_accessor :standard_time_format
         attr_accessor :status_authenticate
+        attr_accessor :environment_name
+        attr_accessor :release_version
+        attr_accessor :deployment_version
+        attr_accessor :assets_url
+        attr_accessor :assets_manifest_filename
 
         def initialize
           @standard_date_format = "%b %d, %Y"
           @standard_datetime_format = "%b %d, %Y %l:%M %p %Z"
           @standard_time_format = "%l:%M %p %Z"
           @status_authenticate = -> { head :forbidden }
+          @environment_name = 'development'
+          @assets_manifest_filename = 'assets.json'
           super
         end
       end
-
     end
-
   end
 end
