@@ -57,10 +57,13 @@ module OpenStax
         attr_accessor :standard_time_format
         attr_accessor :status_authenticate
         attr_accessor :environment_name
+        attr_accessor :backend
         attr_accessor :release_version
-        attr_accessor :deployment_version
+        attr_accessor :frontend
         attr_accessor :assets_url
         attr_accessor :assets_manifest_filename
+        attr_accessor :deployment
+        attr_accessor :deployment_version
 
         def initialize
           @standard_date_format = "%b %d, %Y"

@@ -12,25 +12,25 @@
     offline: '🔌',
     sleeping: '💤'
   }
-
-  backend = @application_name == 'Tutor' ? 'tutor-server' : @application_name.downcase
 %>
 
 <h3>Versions</h3>
 
 <ul>
   <li>
-    Backend (<%= backend %>): <%=
+    Backend (<%= OpenStax::Utilities.configuration.backend %>): <%=
       OpenStax::Utilities.configuration.release_version || 'not deployed'
     %>
   </li>
   <% unless OpenStax::Utilities.configuration.assets_url.blank? %>
   <li>
-    Frontend (tutor-js): <%= OpenStax::Utilities::Assets.manifest.version || 'not deployed' %>
+    Frontend (<%= OpenStax::Utilities.configuration.frontend %>): <%=
+      OpenStax::Utilities::Assets.manifest.version || 'not deployed'
+    %>
   </li>
   <% end %>
   <li>
-    Deployment (tutor-deployment): <%=
+    Deployment (<%= OpenStax::Utilities.configuration.deployment %>): <%=
       OpenStax::Utilities.configuration.deployment_version || 'not deployed'
     %>
   </li>
