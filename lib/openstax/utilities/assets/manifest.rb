@@ -10,7 +10,9 @@ module OpenStax::Utilities
       def initialize
         @assets = HashWithIndifferentAccess.new
 
-        url = OpenStax::Utilities::Assets.url_for('assets.json')
+        url = OpenStax::Utilities::Assets.url_for(
+          OpenStax::Utilities.configuration.assets_manifest_filename
+        )
 
         begin
           response = self.class.client.get url

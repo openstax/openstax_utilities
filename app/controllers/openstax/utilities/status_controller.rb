@@ -7,7 +7,7 @@ class OpenStax::Utilities::StatusController < ActionController::Base
 
   def index
     @application_name = OSU::SITE_NAME.humanize
-    @environment_name = Rails.application.secrets.environment_name
+    @environment_name = OpenStax::Utilities.configuration.environment_name
 
     @statuses = if @environment_name == 'development'
       [ [ 'local', 1, 1, :ok ] ]

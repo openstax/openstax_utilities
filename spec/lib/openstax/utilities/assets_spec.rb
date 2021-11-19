@@ -25,10 +25,11 @@ RSpec.describe OpenStax::Utilities::Assets, vcr: VCR_OPTS do
 
   context 'loading remote manifest' do
     before do
-      @previous_assets_url = Rails.application.secrets.assets_url
-      Rails.application.secrets.assets_url = 'https://tutor-dev.openstax.org/assets'
+      @config = OpenStax::Utilities.configuration
+      @previous_assets_url = @config.assets_url
+      @config.assets_url = 'https://tutor-dev.openstax.org/assets'
     end
-    after  { Rails.application.secrets.assets_url = @previous_assets_url }
+    after  { @config.assets_url = @previous_assets_url }
 
     it 'uses remote json' do
       expect(described_class.manifest).to be_kind_of described_class::Manifest
