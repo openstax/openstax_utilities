@@ -56,7 +56,7 @@ module OpenStax
 
         fatal_error(offending_inputs: :per_page,
                     message: 'Invalid page size',
-                    code: :invalid_per_page) if !per_page.nil? && per_page < 1
+                    code: :invalid_per_page) if !per_page.nil? && per_page < 0
         fatal_error(offending_inputs: :page,
                     message: 'Invalid page number',
                     code: :invalid_page) if page < 1
