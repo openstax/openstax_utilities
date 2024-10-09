@@ -1,24 +1,26 @@
-ActionController::Base.define_singleton_method(:protect_beta) do |options={}|
-  options[:username] ||= SecureRandom.hex
-  options[:password] ||= SecureRandom.hex
-  options[:enable_always] ||= false
-  options[:message] ||= ''
-  
-  return if !(options[:enable_always] || Rails.env.production?)
+ActiveSupport.on_load(:action_controller_base) do
+  ActionController::Base.define_singleton_method(:protect_beta) do |options={}|
+    options[:username] ||= SecureRandom.hex
+    options[:password] ||= SecureRandom.hex
+    options[:enable_always] ||= false
+    options[:message] ||= ''
 
-  @@protect_beta_options = options
-  prepend_before_filter :protect_beta
-end
+    return if !(options[:enable_always] || Rails.env.production?)
 
-ActionController::Base.define_singleton_method(:skip_protect_beta) do |options={}|
-  skip_before_filter :protect_beta, options
-end
+    @@protect_beta_options = options
+    prepend_before_filter :protect_beta
+  end
 
-class ActionController::Base
-  def protect_beta
-    options = @@protect_beta_options
-    authenticate_or_request_with_http_basic(options[:message]) do |username, password|
-      username == options[:username] && password == options[:password]
+  ActionController::Base.define_singleton_method(:skip_protect_beta) do |options={}|
+    skip_before_filter :protect_beta, options
+  end
+
+  class ActionController::Base
+    def protect_beta
+      options = @@protect_beta_options
+      authenticate_or_request_with_http_basic(options[:message]) do |username, password|
+        username == options[:username] && password == options[:password]
+      end
     end
   end
 end
@@ -27,7 +29,7 @@ module OpenStax
   module Utilities
     module Access
 
-      # Called in a controller to provide an outer level of basic HTTP 
+      # Called in a controller to provide an outer level of basic HTTP
       # authentication, typically used when code is deployed during development
       # and it is not yet ready for public consumption.
       #
@@ -39,7 +41,7 @@ module OpenStax
       # @param :username The authentication username; default value is a random hex string
       # @param :password The authentication password; default value is a random hex string
       # @param :enable_always The default is the authentication is only enabled
-      #   in production, setting this to true will make it effective in all 
+      #   in production, setting this to true will make it effective in all
       #   environments
       # @param :message If given, this message will be displayed in the browser's
       #   authentication dialog box.

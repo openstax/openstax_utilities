@@ -21,4 +21,6 @@ module OpenStax::Utilities
   end
 end
 
-ActionController::Base.send :helper, OpenStax::Utilities::OsuHelper
+ActiveSupport.on_load(:action_controller_base) do
+  ActionController::Base.send :helper, OpenStax::Utilities::OsuHelper
+end
