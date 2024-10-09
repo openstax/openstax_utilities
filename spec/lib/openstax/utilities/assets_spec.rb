@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'vcr_helper'
+require 'ostruct'
 
 RSpec.describe OpenStax::Utilities::Assets, vcr: VCR_OPTS do
   before { RequestStore.store[:assets_manifest] = nil }
